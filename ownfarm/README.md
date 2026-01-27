@@ -7,3 +7,4 @@
 Build image from repo
 docker build --no-cache -t vkcom/devicehub:latest .
 
+Some changes
