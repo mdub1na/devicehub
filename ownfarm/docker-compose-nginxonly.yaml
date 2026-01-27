@@ -1,0 +1,11 @@
+services:
+  nginx:
+    image: "nginx:bookworm"
+    container_name: devicehub-nginx
+    volumes:
+      - ./scripts/nginx-http-only.conf:/etc/nginx/nginx.conf:ro
+      - /home/hex354/certbot/etc/letsencrypt:/etc/letsencrypt:ro
+      - /home/hex354/certbot/web:/var/www/certbot:ro
+    ports:
+      - "80:80"
+      - "443:443"
