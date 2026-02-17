@@ -7,5 +7,38 @@ resources:
   - https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
 patches:
-  - path: node-affinity-patch.yaml
-  - path: statefulset-patch.yaml
+  - target:
+      kind: Deployment
+    patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: dummy
+      spec:
+        template:
+          spec:
+            nodeSelector:
+              node-role: infra
+            tolerations:
+              - key: "node-role"
+                operator: "Equal"
+                value: "infra"
+                effect: "NoSchedule"
+
+  - target:
+      kind: StatefulSet
+    patch: |-
+      apiVersion: apps/v1
+      kind: StatefulSet
+      metadata:
+        name: dummy
+      spec:
+        template:
+          spec:
+            nodeSelector:
+              node-role: infra
+            tolerations:
+              - key: "node-role"
+                operator: "Equal"
+                value: "infra"
+                effect: "NoSchedule"
