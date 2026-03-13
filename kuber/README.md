@@ -1,33 +1,35 @@
-# Kubernetes GitOps bootstrap
+# DeviceHub K8s Notes
 
-This directory contains Kubernetes manifests for the DeviceHub farm.
+This directory contains architecture notes for deploying the DeviceHub mobile farm on the current Proxmox, k3s, and Mac mini infrastructure.
 
-## Current layout
+## Documents
 
-- `bootstrap/argocd`: ArgoCD installation overlay (already applied in cluster).
-- `gitops/bootstrap/root-app.yaml`: root Application for App-of-Apps.
-- `gitops/root`: child Applications (`infra` and `apps`).
-- `gitops/infra`: infrastructure-level resources (currently `AppProject`).
-- `gitops/apps`: app-level resources (currently `devicehub` namespace).
+- [Requirements and analysis](./docs/requirements.md)
+- [Target architecture](./docs/architecture.md)
 
-## Bootstrap steps
+## Current decisions
 
-1. Update `repoURL` in:
-   - `kuber/gitops/bootstrap/root-app.yaml`
-   - `kuber/gitops/root/infra-app.yaml`
-   - `kuber/gitops/root/apps-app.yaml`
-2. Ensure `targetRevision` points to your active branch (`main` by default).
-3. Apply root app:
+- Kubernetes cluster:
+  - `k3s-control` - `192.168.0.121`
+  - `k3s-worker-1` - `192.168.0.122`
+  - `k3s-worker-2` - `192.168.0.123`
+- Android devices will be connected to the Proxmox host and passed through into one dedicated Android worker VM.
+- iOS execution stays on the external `Mac mini`.
+- Main Kubernetes namespaces:
+  - `devicehub`
+  - `mongodb`
+  - `appium`
+  - `openldap`
+- Selected platform stack:
+  - `Traefik`
+  - `Prometheus + Grafana`
+  - `Loki + Promtail`
+  - `Alertmanager`
+  - later `cert-manager + Let's Encrypt`
+- `Argo CD` will be used as the GitOps deployment layer for Kubernetes workloads.
 
-```bash
-kubectl apply -f kuber/gitops/bootstrap/root-app.yaml
-```
+## Next focus
 
-4. Verify:
-
-```bash
-kubectl -n argocd get applications
-kubectl -n argocd get appprojects
-kubectl get ns devicehub
-```
-
+- finalize phase 1 deployment map by namespace and node placement
+- define `Argo CD` application boundaries
+- prepare implementation layout for `5.3 codex`
