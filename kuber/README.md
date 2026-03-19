@@ -4,10 +4,20 @@ This directory contains architecture notes for deploying the DeviceHub mobile fa
 
 ## Documents
 
-- [Requirements and analysis](./docs/requirements.md)
-- [Target architecture](./docs/architecture.md)
+- [Current requirements](./docs/requirements.md)
+- [Current architecture](./docs/architecture.md)
 - [Implementation roadmap](./docs/roadmap.md)
 - [GitOps layout](./docs/gitops-layout.md)
+- [Decision log](./docs/decision-log.md)
+
+## Reading order for implementation
+
+1. `requirements.md`
+2. `architecture.md`
+3. `roadmap.md`
+4. `gitops-layout.md`
+
+Use `decision-log.md` only for background reasoning and past choices.
 
 ## Current decisions
 

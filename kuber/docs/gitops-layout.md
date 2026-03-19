@@ -1,18 +1,12 @@
 # GitOps Layout
 
-## Purpose
-
-This document describes the proposed GitOps directory structure for `Argo CD`.
-
-The layout is split by platform slice so each part of the system can be deployed, debugged, and evolved independently.
-
-## Top-level idea
+## Rules
 
 - `root/` contains only top-level `Argo CD Application` resources
-- each child directory represents one platform slice
-- each child directory is self-contained and owns its namespace resources
+- each child directory maps to one platform slice
+- each child directory owns its own namespace resources
 - ingress resources live next to the applications they expose
-- example secrets can be stored in git, but real secrets should use a dedicated secret-management approach later
+- example secrets may exist in git, but real secret management is deferred
 
 ## Proposed structure
 
@@ -24,19 +18,6 @@ kuber/
   README.md
   docs/
   gitops/
-```
-
-</details>
-
-<details>
-<summary><code>kuber/docs/</code></summary>
-
-```text
-docs/
-  requirements.md
-  architecture.md
-  roadmap.md
-  gitops-layout.md
 ```
 
 </details>
@@ -57,11 +38,6 @@ root/
   observability-app.yaml
 ```
 
-Purpose:
-
-- defines the root app / app-of-apps entrypoint
-- wires all child platform applications together
-
 </details>
 
 <details>
@@ -73,10 +49,6 @@ argocd/
   kustomization.yaml
   project.yaml
 ```
-
-Purpose:
-
-- stores Argo CD namespace and project-level manifests
 
 </details>
 
@@ -93,11 +65,6 @@ mongodb/
   mongodb-init-job.yaml
   devicehub-migrate-job.yaml
 ```
-
-Purpose:
-
-- isolated MongoDB deployment slice
-- keeps database state and bootstrap logic separate from app runtime
 
 </details>
 
@@ -116,11 +83,6 @@ openldap/
   phpldapadmin-ingress.yaml
 ```
 
-Purpose:
-
-- isolated identity slice
-- keeps LDAP and phpLDAPadmin changes separate from DeviceHub changes
-
 </details>
 
 <details>
@@ -132,49 +94,32 @@ devicehub/
   kustomization.yaml
   configmap.yaml
   secrets-example.yaml
-
   devicehub-app-deployment.yaml
   devicehub-app-service.yaml
-
   devicehub-auth-deployment.yaml
   devicehub-auth-service.yaml
-
   devicehub-api-deployment.yaml
   devicehub-api-service.yaml
-
   devicehub-websocket-deployment.yaml
   devicehub-websocket-service.yaml
-
   devicehub-api-groups-engine-deployment.yaml
   devicehub-processor-deployment.yaml
   devicehub-reaper-deployment.yaml
-
   devicehub-triproxy-app-deployment.yaml
   devicehub-triproxy-app-service.yaml
-
   devicehub-triproxy-dev-deployment.yaml
   devicehub-triproxy-dev-service.yaml
-
   devicehub-storage-temp-deployment.yaml
   devicehub-storage-temp-service.yaml
   devicehub-storage-temp-pvc.yaml
-
   devicehub-storage-plugin-apk-deployment.yaml
   devicehub-storage-plugin-apk-service.yaml
-
   devicehub-storage-plugin-image-deployment.yaml
   devicehub-storage-plugin-image-service.yaml
-
   adbd-deployment.yaml
   devicehub-provider-deployment.yaml
-
   ingress.yaml
 ```
-
-Purpose:
-
-- main DeviceHub runtime slice
-- contains only DeviceHub services, not LDAP, Appium, or mitmproxy
 
 </details>
 
@@ -194,11 +139,6 @@ appium/
   ingress.yaml
 ```
 
-Purpose:
-
-- automation slice
-- separates Appium rollout from DeviceHub core rollout
-
 </details>
 
 <details>
@@ -214,11 +154,6 @@ mitmproxy/
   mitmweb-service.yaml
   ingress.yaml
 ```
-
-Purpose:
-
-- traffic interception slice
-- independent from the DeviceHub release cycle
 
 </details>
 
@@ -241,17 +176,4 @@ observability/
   ingress.yaml
 ```
 
-Purpose:
-
-- monitoring, logging, and alerting slice
-- independent operational layer
-
 </details>
-
-## Why this layout was chosen
-
-- it matches the agreed namespace model
-- it matches the agreed platform layers
-- it works naturally with the root app / app-of-apps model
-- it keeps ownership boundaries clear
-- it makes later Argo CD troubleshooting much easier

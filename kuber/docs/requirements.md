@@ -1,142 +1,70 @@
-# Requirements And Analysis
+# Current Requirements
 
 ## Goal
 
-Build a Kubernetes-based mobile device farm for DeviceHub on the existing infrastructure.
+Deploy DeviceHub as a Kubernetes-based mobile device farm on the current Proxmox, k3s, and Mac mini infrastructure.
 
 ## Infrastructure
 
-### Proxmox host
+### Proxmox
 
-- `192.168.0.110`
+- host: `192.168.0.110`
 
-### k3s virtual machines
+### k3s nodes
 
-- `k3s-control` - `192.168.0.121` - `4 CPU`, `6 GB RAM`, `128 GB disk`
-- `k3s-worker-1` - `192.168.0.122` - `6 CPU`, `16 GB RAM`, `128 GB disk`
-- `k3s-worker-2` - `192.168.0.123` - `4 CPU`, `8 GB RAM`, `128 GB disk`
+| Node | IP | CPU | RAM | Disk | Role |
+| --- | --- | --- | --- | --- | --- |
+| `k3s-control` | `192.168.0.121` | `4` | `6Gi` | `128Gi` | control / GitOps |
+| `k3s-worker-1` | `192.168.0.122` | `6` | `16Gi` | `128Gi` | Android execution |
+| `k3s-worker-2` | `192.168.0.123` | `4` | `8Gi` | `128Gi` | storage / stateful |
 
 ### Apple hardware
 
-- `Mac mini M4` - `16 GB RAM`, `256 GB disk`
+| Host | RAM | Disk | Role |
+| --- | --- | --- | --- |
+| `Mac mini M4` | `16Gi` | `256Gi` | iOS execution |
 
-## Functional requirements
+## Functional scope
 
-- DeviceHub already implements browser-based manual testing.
-- The browser UI already provides:
-  - device screen streaming
-  - remote control
-  - device file access
-  - device logs
-  - remote app installation
-- DeviceHub must also act as a hub for UI automation on Android and iOS.
+- DeviceHub browser-based manual testing already exists and must be deployed, not rewritten.
+- DeviceHub must provide:
+  - browser access to physical devices
+  - Android and iOS UI automation support
+  - external ADB access for Android devices
 
 ## Device connectivity
 
 - Android devices are physically connected to the Proxmox host.
-- Android devices are manually passed through from Proxmox into the selected VM.
-- iOS devices are handled through the external Mac mini.
+- Android devices are passed through into one dedicated VM.
+- iOS devices stay outside k3s and are handled through the Mac mini.
 
 ## Access requirements
 
-- DeviceHub must ultimately be available from the Internet.
-- Initial verification can happen over LAN first.
-- External users must be able to connect to Android devices over ADB.
-- `phpLDAPadmin` must be available continuously.
+- phase 1 validation: LAN-first
+- later target: Internet exposure with HTTPS
+- `phpLDAPadmin` must remain available
 
-## Scale targets
+## Capacity targets
 
 - `8` Android devices
 - `2` iOS devices
-- parallel automated test execution is required
+- parallel automation is required
 
-## Repository analysis
+## Platform components in scope
 
-### Main findings
-
-- The clearest runtime topology source is `docker-compose-prod.yaml`.
-- DeviceHub is split into multiple services:
-  - `devicehub-app`
-  - `devicehub-auth`
-  - `devicehub-api`
-  - `devicehub-websocket`
-  - `devicehub-api-groups-engine`
-  - `devicehub-triproxy-app`
-  - `devicehub-triproxy-dev`
-  - `devicehub-processor`
-  - `devicehub-reaper`
-  - `devicehub-provider`
-  - `adbd`
-  - storage services
-  - `MongoDB`
-- Runtime processes are exposed as independent `stf` / `devicehub` CLI units.
-- Internal communication heavily relies on `ZeroMQ`.
-- The repo already supports `LDAP` auth via `stf auth-ldap`.
-- The repo already contains iOS integration, but it depends on macOS tooling and should stay on the Mac mini.
-
-### Deployment conclusion
-
-Everything related to DeviceHub except iOS execution can be deployed in Kubernetes.
-
-This includes:
-
-- UI
-- API
-- websocket
-- auth
-- groups engine
-- processor
-- reaper
-- triproxy services
-- provider
-- Android ADB workloads
-- storage services
-- MongoDB
-
-Additional required platform services:
-
+- DeviceHub core services
+- `MongoDB`
 - `OpenLDAP`
 - `phpLDAPadmin`
-- observability stack
+- `Appium Grid`
 - `mitmproxy` / `mitmweb`
-- Appium Grid
+- observability stack
+- `Argo CD`
 
-## Technology decisions already agreed
+## Agreed platform stack
 
-### MongoDB
-
-- MongoDB should run in Kubernetes.
-- For phase 1, use a simple Kubernetes-hosted MongoDB with persistent storage.
-- Do not start with a complex multi-node MongoDB topology.
-
-### mitmproxy
-
-- `mitmproxy` can run in Kubernetes.
-- `mitmweb` can be exposed through ingress.
-- Android traffic interception is realistic if proxy and CA trust are configured.
-- iOS traffic interception is possible, but requires careful routing and certificate trust handling.
-- Certificate pinning is a known limitation.
-
-### Appium Grid
-
-- Appium Grid control plane can run in Kubernetes.
-- Android Appium nodes can run in Kubernetes on the Android worker.
-- iOS Appium nodes should run on the Mac mini and register into the shared grid.
-
-### Observability stack
-
-Selected stack:
-
-- `Traefik`
-- `Prometheus + Grafana`
-- `Loki + Promtail`
-- `Alertmanager`
-- later `cert-manager + Let's Encrypt`
-
-### Monitoring scope
-
-- full monitoring is required from day one:
-  - metrics
-  - logs
-  - alerting foundation
-- device temperature alerting is planned later via a DeviceHub API method
+- ingress: `Traefik`
+- metrics: `Prometheus + Grafana`
+- logs: `Loki + Promtail`
+- alerting: `Alertmanager`
+- later HTTPS: `cert-manager + Let's Encrypt`
