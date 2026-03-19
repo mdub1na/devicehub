@@ -102,6 +102,7 @@ Phase plan:
 - `mongodb`: MongoDB workloads
 - `appium`: Appium Grid and Kubernetes-side automation services
 - `openldap`: OpenLDAP and phpLDAPadmin
+- `mitmproxy`: traffic interception services
 - `argocd`: GitOps control plane
 - later optional infra namespaces for observability and cert-manager if we want clearer separation
 
@@ -152,9 +153,6 @@ Use for:
 - `OpenLDAP`
 - `phpLDAPadmin`
 - `devicehub-storage-temp`
-- `devicehub-storage-plugin-apk`
-- `devicehub-storage-plugin-image`
-- `mitmproxy` / `mitmweb`
 - Appium Grid control plane
 - observability stack
 
@@ -163,8 +161,6 @@ Fixed placement requirements:
 - `MongoDB` must be fixed to this node
 - `OpenLDAP` must be fixed to this node
 - `devicehub-storage-temp` must be fixed to this node
-- `devicehub-storage-plugin-apk` must be fixed to this node
-- `devicehub-storage-plugin-image` must be fixed to this node
 - these workloads depend on persistent or node-local disk usage in phase 1
 
 ### Mac mini
@@ -193,9 +189,42 @@ Phase 1 fixed labels:
 Placement rules:
 
 - `adbd`, `devicehub-provider`, and Android Appium nodes must be pinned to the Android worker
-- `MongoDB`, `OpenLDAP`, `devicehub-storage-temp`, `devicehub-storage-plugin-apk`, and `devicehub-storage-plugin-image` must be pinned to `k3s-worker-2`
+- `MongoDB`, `OpenLDAP`, and `devicehub-storage-temp` must be pinned to `k3s-worker-2`
 - other DeviceHub control services should remain movable and not be pinned to a single worker by default
 - singleton coordination services should avoid unnecessary relocation where practical, but do not need hard pinning unless they own local state
+
+## Required Affinity
+
+Phase 1 workloads with hard node requirements:
+
+| Workload | Required node label | Why it is required |
+| --- | --- | --- |
+| `adbd` | `devicehub.role=android` | needs USB-attached Android devices on the dedicated Android worker |
+| `devicehub-provider` | `devicehub.role=android` | must run next to `adbd` and the physically attached Android devices |
+| `mongodb` | `devicehub.role=storage` | stores database data on the fixed storage node |
+| `openldap` | `devicehub.role=storage` | stores LDAP directory data on the fixed storage node |
+| `devicehub-storage-temp` | `devicehub.role=storage` | uses node disk for temporary files |
+
+Workloads intentionally not using required affinity in phase 1:
+
+- `devicehub-app`
+- `devicehub-auth`
+- `devicehub-api`
+- `devicehub-websocket`
+- `devicehub-api-groups-engine`
+- `devicehub-processor`
+- `devicehub-reaper`
+- `devicehub-triproxy-app`
+- `devicehub-triproxy-dev`
+- `devicehub-storage-plugin-apk`
+- `devicehub-storage-plugin-image`
+- Appium Grid control plane services
+
+Rationale:
+
+- these services do not depend on local USB ownership
+- these services do not need fixed node-local product storage in phase 1
+- keeping them movable gives the cluster more scheduling flexibility
 
 ## Argo CD
 
@@ -253,7 +282,7 @@ Suggested structure:
 Included:
 
 - core DeviceHub in Kubernetes
-- separate namespaces for `devicehub`, `mongodb`, `appium`, `openldap`, `argocd`
+- separate namespaces for `devicehub`, `mongodb`, `appium`, `openldap`, `mitmproxy`, `argocd`
 - one dedicated Android worker
 - LAN-first access model
 - observability stack
@@ -323,19 +352,16 @@ Phase 1 intent:
 | `devicehub-triproxy-app` | `Deployment` | no hard pin | singleton | app-side ZeroMQ proxy |
 | `devicehub-triproxy-dev` | `Deployment` | no hard pin | singleton | device-side ZeroMQ proxy |
 | `devicehub-storage-temp` | `Deployment` | pin to `k3s-worker-2` | singleton initially | temp storage and local files |
-| `devicehub-storage-plugin-apk` | `Deployment` | pin to `k3s-worker-2` | scalable later | APK storage and local files |
-| `devicehub-storage-plugin-image` | `Deployment` | pin to `k3s-worker-2` | scalable later | screenshots and image files |
+| `devicehub-storage-plugin-apk` | `Deployment` | no hard pin | scalable later | uses `devicehub-storage-temp` as backend storage service |
+| `devicehub-storage-plugin-image` | `Deployment` | no hard pin | scalable later | uses `devicehub-storage-temp` as backend storage service |
 | `adbd` | pinned `Deployment` | pin to `k3s-worker-1` | singleton | USB + ADB access |
 | `devicehub-provider` | `Deployment` | pin to `k3s-worker-1` | singleton initially | device owner workload |
 | Android device workers | spawned by provider | run on `k3s-worker-1` | dynamic | not managed as regular static manifests |
-| `mitmproxy` | `Deployment` | no hard pin | singleton initially | interception backend |
-| `mitmweb` | `Deployment` or sidecar with `mitmproxy` | no hard pin | singleton | web UI for interception |
 
 Phase 1 intent:
 
 - keep DeviceHub control services on the general worker
 - isolate Android USB-bound services on the dedicated Android worker
-- keep traffic interception in the product namespace for now
 
 ### `appium` namespace
 
@@ -352,6 +378,18 @@ Phase 1 intent:
 - host Grid control plane in Kubernetes
 - keep Android Appium execution physically near Android devices
 - allow later registration of external iOS Appium nodes from the Mac mini
+
+### `mitmproxy` namespace
+
+| Workload | Kubernetes kind | Placement | Scaling | Notes |
+| --- | --- | --- | --- | --- |
+| `mitmproxy` | `Deployment` | no hard pin | singleton initially | interception backend |
+| `mitmweb` | `Deployment` or sidecar with `mitmproxy` | no hard pin | singleton | web UI for interception |
+
+Phase 1 intent:
+
+- isolate traffic interception from the main DeviceHub runtime
+- make release and access policy management simpler
 
 ### Observability namespace
 
@@ -394,9 +432,6 @@ Phase 1 intent:
 - `mongodb`
 - `openldap`
 - `devicehub-storage-temp`
-- `devicehub-storage-plugin-apk`
-- `devicehub-storage-plugin-image`
-- `mitmproxy` / `mitmweb`
 - Appium Grid control plane
 - observability stack
 - node label: `devicehub.role=storage`
@@ -415,10 +450,369 @@ Confirmed as node-fixed in phase 1:
 - `mongodb`
 - `openldap`
 - `devicehub-storage-temp`
-- `devicehub-storage-plugin-apk`
-- `devicehub-storage-plugin-image`
 
 Additional note:
 
 - if `Prometheus`, `Loki`, or `Grafana` are configured with persistent local storage, they also become disk-sensitive workloads and should then be pinned deliberately
 - if observability storage is backed by portable persistent volumes, they do not need hard node pinning for architectural reasons
+
+## Phase 1 Storage Strategy
+
+### General decision
+
+Three disk-bound platform services use persistent storage in phase 1.
+
+Services covered by this rule:
+
+- `mongodb`
+- `openldap`
+- `devicehub-storage-temp`
+
+### Why this is the chosen model
+
+- it keeps pod restarts safe
+- it avoids accidental data loss during rollout or node-level restarts
+- it matches the fixed placement of the storage node
+- it keeps the first implementation predictable
+
+### Cleanup assumption
+
+- `devicehub-storage-temp`
+
+are still treated as persistent services, but temporary file cleanup is expected to be handled by the services themselves.
+
+Phase 1 assumption:
+
+- disk growth should not rely on pod restarts for cleanup
+- cleanup logic belongs to the application services, not to Kubernetes volume churn
+
+### Volume model
+
+Use separate persistent volumes / claims for each service.
+
+Do not share one common application data volume across these workloads.
+
+Planned mapping:
+
+- `mongodb` -> dedicated persistent volume
+- `openldap` -> dedicated persistent volume
+- `devicehub-storage-temp` -> dedicated persistent volume
+
+### Storage implementation choice for phase 1
+
+Chosen option:
+
+- `local-path` storage on `k3s-worker-2`
+
+Practical meaning:
+
+- persistent volumes for the five disk-bound services are backed by storage on the fixed storage node
+- workloads remain pinned to `k3s-worker-2`
+- this keeps storage simple and aligned with the single-node storage strategy chosen for phase 1
+
+Services using this storage model:
+
+- `mongodb`
+- `openldap`
+- `devicehub-storage-temp`
+
+Operational implication:
+
+- this is a simple and predictable phase 1 storage model
+- it is not designed for multi-node failover
+- if later we need portable or replicated storage, this can be revisited as a separate architecture step
+### Initial PVC sizes
+
+- `mongodb` -> `5Gi`
+- `openldap` -> `1Gi`
+- `devicehub-storage-temp` -> `5Gi`
+
+### Storage plugin note
+
+- `devicehub-storage-plugin-apk`
+- `devicehub-storage-plugin-image`
+
+do not get their own required affinity or dedicated persistent volumes in phase 1.
+
+Reason:
+
+- they use `devicehub-storage-temp` as the backend storage service for writes and reads
+- persistence responsibility stays with `devicehub-storage-temp`
+
+## Phase 1 Scaling Policy
+
+### `devicehub` namespace
+
+Singleton workloads:
+
+- `devicehub-app`
+- `devicehub-auth`
+- `devicehub-api`
+- `devicehub-websocket`
+- `devicehub-api-groups-engine`
+- `devicehub-reaper`
+- `devicehub-triproxy-app`
+- `devicehub-triproxy-dev`
+- `devicehub-storage-temp`
+
+Scalable workloads:
+
+- `devicehub-processor`
+- `devicehub-storage-plugin-apk`
+- `devicehub-storage-plugin-image`
+
+Paired scaling workloads:
+
+- `adbd`
+- `devicehub-provider`
+
+Paired scaling rule:
+
+- `adbd` and `devicehub-provider` do not scale independently
+- they scale together as one Android execution pair
+- a new pair only makes sense when a new Android execution node or a new USB ownership boundary is added
+
+### `mongodb` namespace
+
+Singleton workloads:
+
+- `mongodb`
+- `mongodb-init`
+- `devicehub-migrate`
+
+### `openldap` namespace
+
+Singleton workloads:
+
+- `openldap`
+- `phpldapadmin`
+
+### `argocd` namespace
+
+Singleton workloads:
+
+- `argocd-server`
+- `argocd-repo-server`
+- `argocd-application-controller`
+- `argocd-redis`
+
+Phase 1 note:
+
+- Argo CD is intentionally kept simple and non-HA in the first implementation
+
+### `appium` namespace
+
+Singleton workloads:
+
+- `appium-grid-router`
+- `appium-grid-distributor`
+- `appium-grid-session-queue`
+- `appium-grid-sessions`
+
+Scalable workloads:
+
+- Android Appium nodes
+
+Phase 1 note:
+
+- Grid control plane stays singleton
+- execution nodes scale with Android capacity
+
+### `mitmproxy` namespace
+
+Singleton workloads:
+
+- `mitmproxy`
+- `mitmweb`
+
+### `observability` namespace
+
+Singleton workloads:
+
+- `prometheus`
+- `grafana`
+- `loki`
+- `alertmanager`
+
+Scalable workloads:
+
+- `promtail`
+
+Scaling note:
+
+- `promtail` is expected to run per node, typically as a `DaemonSet`
+
+## Phase 1 Scaling Summary
+
+### Singleton by default
+
+- all `argocd` workloads
+- all `mongodb` workloads
+- all `openldap` workloads
+- most `devicehub` control services
+- Appium Grid control plane
+- `prometheus`
+- `grafana`
+- `loki`
+- `alertmanager`
+
+### Scalable in phase 1
+
+- `devicehub-processor`
+- `devicehub-storage-plugin-apk`
+- `devicehub-storage-plugin-image`
+- Android Appium nodes
+- `promtail`
+
+### Scalable only as an execution pair
+
+- `adbd`
+- `devicehub-provider`
+
+## Phase 1 Kubernetes Resource Types
+
+### `argocd` namespace
+
+| Workload | Resource type |
+| --- | --- |
+| `argocd-server` | `Deployment` |
+| `argocd-repo-server` | `Deployment` |
+| `argocd-application-controller` | `StatefulSet` |
+| `argocd-redis` | `Deployment` |
+
+### `mongodb` namespace
+
+| Workload | Resource type |
+| --- | --- |
+| `mongodb` | `StatefulSet` |
+| `mongodb-init` | `Job` |
+| `devicehub-migrate` | `Job` |
+
+### `openldap` namespace
+
+| Workload | Resource type |
+| --- | --- |
+| `openldap` | `StatefulSet` |
+| `phpldapadmin` | `Deployment` |
+
+### `devicehub` namespace
+
+| Workload | Resource type |
+| --- | --- |
+| `devicehub-app` | `Deployment` |
+| `devicehub-auth` | `Deployment` |
+| `devicehub-api` | `Deployment` |
+| `devicehub-websocket` | `Deployment` |
+| `devicehub-api-groups-engine` | `Deployment` |
+| `devicehub-processor` | `Deployment` |
+| `devicehub-reaper` | `Deployment` |
+| `devicehub-triproxy-app` | `Deployment` |
+| `devicehub-triproxy-dev` | `Deployment` |
+| `devicehub-storage-temp` | `Deployment` |
+| `devicehub-storage-plugin-apk` | `Deployment` |
+| `devicehub-storage-plugin-image` | `Deployment` |
+| `adbd` | `Deployment` |
+| `devicehub-provider` | `Deployment` |
+
+### `appium` namespace
+
+| Workload | Resource type |
+| --- | --- |
+| `appium-grid-router` | `Deployment` |
+| `appium-grid-distributor` | `Deployment` |
+| `appium-grid-session-queue` | `Deployment` |
+| `appium-grid-sessions` | `Deployment` |
+| Android Appium nodes | `Deployment` |
+
+### `mitmproxy` namespace
+
+| Workload | Resource type |
+| --- | --- |
+| `mitmproxy` | `Deployment` |
+| `mitmweb` | `Deployment` |
+
+### `observability` namespace
+
+| Workload | Resource type |
+| --- | --- |
+| `prometheus` | `StatefulSet` |
+| `grafana` | `Deployment` |
+| `loki` | `StatefulSet` |
+| `promtail` | `DaemonSet` |
+| `alertmanager` | `Deployment` |
+
+## Resource Type Summary
+
+### `StatefulSet`
+
+- `argocd-application-controller`
+- `mongodb`
+- `openldap`
+- `prometheus`
+- `loki`
+
+### `Job`
+
+- `mongodb-init`
+- `devicehub-migrate`
+
+### `DaemonSet`
+
+- `promtail`
+
+### `Deployment`
+
+- all remaining workloads in phase 1
+
+## GitOps Layout
+
+The proposed GitOps repository layout is documented separately in [gitops-layout.md](./gitops-layout.md).
+
+## AppProject Model
+
+Phase 1 decision:
+
+- use one shared `Argo CD AppProject` for the whole platform
+
+### AppProject name
+
+- `devicehub-platform`
+
+### Allowed source repository
+
+- `git@github.com:mdub1na/devicehub.git`
+
+### Allowed destination cluster
+
+- `https://kubernetes.default.svc`
+
+### Allowed namespaces
+
+- `argocd`
+- `mongodb`
+- `openldap`
+- `devicehub`
+- `appium`
+- `mitmproxy`
+- `observability`
+
+### Allowed cluster-scoped resources in phase 1
+
+- `Namespace`
+
+### Applications using this AppProject
+
+- `argocd`
+- `mongodb`
+- `openldap`
+- `devicehub`
+- `appium`
+- `mitmproxy`
+- `observability`
+
+### Why this model was chosen
+
+- it keeps phase 1 simple
+- it is strict enough for one cluster and one platform repo
+- it avoids premature complexity from splitting projects too early
+- it can be split into multiple AppProjects later if the platform grows

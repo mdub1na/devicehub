@@ -6,6 +6,8 @@ This directory contains architecture notes for deploying the DeviceHub mobile fa
 
 - [Requirements and analysis](./docs/requirements.md)
 - [Target architecture](./docs/architecture.md)
+- [Implementation roadmap](./docs/roadmap.md)
+- [GitOps layout](./docs/gitops-layout.md)
 
 ## Current decisions
 
@@ -20,6 +22,7 @@ This directory contains architecture notes for deploying the DeviceHub mobile fa
   - `mongodb`
   - `appium`
   - `openldap`
+  - `mitmproxy`
 - Selected platform stack:
   - `Traefik`
   - `Prometheus + Grafana`
@@ -30,6 +33,6 @@ This directory contains architecture notes for deploying the DeviceHub mobile fa
 
 ## Next focus
 
-- finalize phase 1 deployment map by namespace and node placement
+- finalize implementation roadmap
 - define `Argo CD` application boundaries
 - prepare implementation layout for `5.3 codex`
