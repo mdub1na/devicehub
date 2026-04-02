@@ -10,3 +10,5 @@ resources:
   - openldap-statefulset.yaml
   - phpldapadmin-service.yaml
   - phpldapadmin-deployment.yaml
+  - phpldapadmin-issuer.yaml
+  - phpldapadmin-ingress.yaml

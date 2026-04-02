@@ -69,6 +69,7 @@
     - Let's Encrypt
     - HTTPS
     - Argo CD ingress access without manual port-forward
+    - Argo CD IP whitelist (allow only trusted public IP ranges)
     - MongoDB external access strategy for Mongo Compass (without manual port-forward)
     - enable TLS for OpenLDAP and secure ldap admin access paths
 
