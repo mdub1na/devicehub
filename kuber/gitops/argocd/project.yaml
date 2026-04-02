@@ -6,7 +6,7 @@ metadata:
 spec:
   description: DeviceHub platform project
   sourceRepos:
-    - git@github.com:mdub1na/devicehub.git
+    - https://github.com/mdub1na/devicehub.git
   destinations:
     - server: https://kubernetes.default.svc
       namespace: argocd

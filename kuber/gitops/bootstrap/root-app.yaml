@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: git@github.com:mdub1na/devicehub.git
+    repoURL: https://github.com/mdub1na/devicehub.git
     targetRevision: kuber
     path: kuber/gitops/root
   destination:
