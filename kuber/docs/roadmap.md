@@ -31,6 +31,7 @@
 6. Deploy `OpenLDAP`
    - `openldap`
    - `phpldapadmin`
+   - temporary: keep `LDAP_ADMIN_PASSWORD` in plain manifest (move to Kubernetes Secret later)
 
 7. Deploy DeviceHub core
    - singleton control services
@@ -68,6 +69,8 @@
     - Let's Encrypt
     - HTTPS
     - Argo CD ingress access without manual port-forward
+    - MongoDB external access strategy for Mongo Compass (without manual port-forward)
+    - enable TLS for OpenLDAP and secure ldap admin access paths
 
 ## Validation checkpoints
 

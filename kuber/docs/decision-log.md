@@ -26,6 +26,9 @@ This file keeps background reasoning, rejected alternatives, and explanatory con
 
 - OpenLDAP and phpLDAPadmin stay in Kubernetes.
 - phpLDAPadmin remains continuously available.
+- Pin OpenLDAP image to `osixia/openldap:1.5.0` (avoid `latest`).
+- Pin phpLDAPadmin image to `osixia/phpldapadmin:0.9.0` (avoid `latest`).
+- Phase 1 allows plain `LDAP_ADMIN_PASSWORD` in manifest temporarily; migrate to Kubernetes Secret in a later hardening step.
 
 ### mitmproxy
 
