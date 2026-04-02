@@ -4,8 +4,8 @@ metadata:
   name: devicehub-env
 data:
   STF_SECRET: nosecret
-  STF_DOMAIN: localhost
-  STF_PORT: "443"
+  STF_DOMAIN: 192.168.0.121
+  STF_PORT: "80"
   AUTH_URL: auth/ldap/
   MONGODB_PORT_27017_TCP: mongodb://devicehub-mongo.mongodb.svc.cluster.local:27017
   LDAP_SEARCH_DN: OU=users,DC=ldap,DC=putmyhexon,DC=ru
@@ -13,3 +13,8 @@ data:
   LDAP_URL: ldap://openldap.openldap.svc.cluster.local:389
   LDAP_BIND_DN: CN=admin,DC=ldap,DC=putmyhexon,DC=ru
   LDAP_BIND_CREDENTIALS: prise354
+  STF_APP_AUTH_URL: http://192.168.0.121/auth/ldap/
+  STF_APP_WEBSOCKET_URL: http://192.168.0.121/
+  STF_APP_SECRET: nosecret
+  STF_AUTH_LDAP_APP_URL: http://192.168.0.121
+  STF_AUTH_LDAP_SECRET: nosecret
