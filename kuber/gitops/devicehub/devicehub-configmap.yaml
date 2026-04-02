@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: devicehub-env
+data:
+  STF_SECRET: nosecret
+  STF_DOMAIN: localhost
+  STF_PORT: "443"
+  AUTH_URL: auth/ldap/
+  MONGODB_PORT_27017_TCP: mongodb://devicehub-mongo.mongodb.svc.cluster.local:27017
+  LDAP_SEARCH_DN: OU=users,DC=ldap,DC=putmyhexon,DC=ru
+  LDAP_SEARCH_FIELD: CN
+  LDAP_URL: ldap://openldap.openldap.svc.cluster.local:389
+  LDAP_BIND_DN: CN=admin,DC=ldap,DC=putmyhexon,DC=ru
+  LDAP_BIND_CREDENTIALS: prise354
