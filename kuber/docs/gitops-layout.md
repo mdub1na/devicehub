@@ -41,6 +41,19 @@ root/
 </details>
 
 <details>
+<summary><code>kuber/gitops/bootstrap/</code></summary>
+
+```text
+bootstrap/
+  argocd/
+    namespace.yaml
+    kustomization.yaml
+  root-app.yaml
+```
+
+</details>
+
+<details>
 <summary><code>kuber/gitops/argocd/</code></summary>
 
 ```text

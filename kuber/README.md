@@ -19,6 +19,15 @@ This directory contains architecture notes for deploying the DeviceHub mobile fa
 
 Use `decision-log.md` only for background reasoning and past choices.
 
+## Bootstrap quick start
+
+1. Apply Argo CD install manifests:
+   `kubectl apply -k kuber/gitops/bootstrap/argocd`
+2. Apply root app:
+   `kubectl apply -f kuber/gitops/bootstrap/root-app.yaml`
+3. Confirm Argo CD applications:
+   `kubectl -n argocd get applications`
+
 ## Current decisions
 
 - Kubernetes cluster:

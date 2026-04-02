@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: devicehub-platform
+  namespace: argocd
+spec:
+  description: DeviceHub platform project
+  sourceRepos:
+    - git@github.com:mdub1na/devicehub.git
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: argocd
+    - server: https://kubernetes.default.svc
+      namespace: mongodb
+    - server: https://kubernetes.default.svc
+      namespace: openldap
+    - server: https://kubernetes.default.svc
+      namespace: devicehub
+    - server: https://kubernetes.default.svc
+      namespace: appium
+    - server: https://kubernetes.default.svc
+      namespace: mitmproxy
+    - server: https://kubernetes.default.svc
+      namespace: observability
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
