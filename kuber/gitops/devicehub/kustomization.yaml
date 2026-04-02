@@ -10,4 +10,5 @@ resources:
   - devicehub-core-services.yaml
   - devicehub-core-deployments.yaml
   - devicehub-dynamic-proxy.yaml
+  - devicehub-issuer.yaml
   - devicehub-ingress.yaml

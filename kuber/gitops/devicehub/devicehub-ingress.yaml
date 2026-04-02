@@ -3,11 +3,17 @@ kind: Ingress
 metadata:
   name: devicehub
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: web
+    cert-manager.io/issuer: letsencrypt-http
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
 spec:
   ingressClassName: traefik
+  tls:
+    - hosts:
+        - devicehub.putmyhexon.ru
+      secretName: devicehub-putmyhexon-ru-tls
   rules:
-    - http:
+    - host: devicehub.putmyhexon.ru
+      http:
         paths:
           - path: /d/
             pathType: Prefix

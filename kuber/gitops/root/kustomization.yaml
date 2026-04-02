@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - argocd-app.yaml
   - traefik-app.yaml
+  - cert-manager-app.yaml
   - mongodb-app.yaml
   - openldap-app.yaml
   - devicehub-app.yaml
