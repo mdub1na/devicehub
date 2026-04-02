@@ -67,6 +67,7 @@
     - `cert-manager`
     - Let's Encrypt
     - HTTPS
+    - Argo CD ingress access without manual port-forward
 
 ## Validation checkpoints
 

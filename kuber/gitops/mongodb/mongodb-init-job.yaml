@@ -1,0 +1,77 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mongodb-init
+  labels:
+    app.kubernetes.io/name: mongodb-init
+spec:
+  backoffLimit: 6
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: mongodb-init
+    spec:
+      restartPolicy: OnFailure
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: devicehub.role
+                    operator: In
+                    values:
+                      - storage
+      containers:
+        - name: mongodb-init
+          image: mongo:7.0
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/bash
+            - -lc
+          args:
+            - |
+              set -euo pipefail
+
+              MONGO_HOST="devicehub-mongo.mongodb.svc.cluster.local:27017"
+              MONGO_URI="mongodb://${MONGO_HOST}/admin"
+
+              echo "Waiting for MongoDB to accept connections..."
+              for i in {1..90}; do
+                if mongosh "${MONGO_URI}" --quiet --eval 'db.adminCommand({ ping: 1 }).ok' | grep -q 1; then
+                  break
+                fi
+                sleep 2
+              done
+
+              RS_OK="$(mongosh "${MONGO_URI}" --quiet --eval 'try { rs.status().ok } catch (e) { 0 }')"
+              if [ "${RS_OK}" = "1" ]; then
+                echo "Replica set is already initialized."
+                exit 0
+              fi
+
+              echo "Initializing replica set devicehub-rs..."
+              mongosh "${MONGO_URI}" --quiet <<'EOF'
+              rs.initiate({
+                _id: "devicehub-rs",
+                members: [
+                  {
+                    _id: 0,
+                    host: "devicehub-mongo.mongodb.svc.cluster.local:27017",
+                    priority: 2
+                  }
+                ]
+              })
+              EOF
+
+              echo "Waiting for replica set readiness..."
+              for i in {1..60}; do
+                RS_OK="$(mongosh "${MONGO_URI}" --quiet --eval 'try { rs.status().ok } catch (e) { 0 }')"
+                if [ "${RS_OK}" = "1" ]; then
+                  echo "Replica set initialized."
+                  exit 0
+                fi
+                sleep 2
+              done
+
+              echo "Replica set initialization timed out."
+              exit 1

@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: devicehub-mongo
+  labels:
+    app.kubernetes.io/name: devicehub-mongo
+spec:
+  serviceName: devicehub-mongo
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: devicehub-mongo
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: devicehub-mongo
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: devicehub.role
+                    operator: In
+                    values:
+                      - storage
+      containers:
+        - name: mongodb
+          image: mongo:7.0
+          imagePullPolicy: IfNotPresent
+          args:
+            - --replSet
+            - devicehub-rs
+            - --bind_ip_all
+          ports:
+            - containerPort: 27017
+              name: mongo
+          readinessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -lc
+                - "mongosh --quiet --eval 'db.adminCommand({ ping: 1 }).ok' | grep -q 1"
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -lc
+                - "mongosh --quiet --eval 'db.adminCommand({ ping: 1 }).ok' | grep -q 1"
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 6
+          volumeMounts:
+            - name: mongodb-data
+              mountPath: /data/db
+      volumes:
+        - name: mongodb-data
+          persistentVolumeClaim:
+            claimName: mongodb-data-pvc
