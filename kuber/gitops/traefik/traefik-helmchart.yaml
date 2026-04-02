@@ -18,6 +18,10 @@ spec:
     nodeSelector:
       devicehub.role: control
     tolerations:
+      - key: node-role
+        operator: Equal
+        value: infra
+        effect: NoSchedule
       - key: node-role.kubernetes.io/control-plane
         operator: Exists
         effect: NoSchedule
