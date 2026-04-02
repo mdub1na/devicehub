@@ -415,10 +415,14 @@ spec:
           image: vkcom/devicehub:v1.5.2
           imagePullPolicy: IfNotPresent
           command:
-            - /bin/sh
-            - -lc
-          args:
-            - stf auth-ldap --port 3000 --app-url https://${STF_DOMAIN}:${STF_PORT} --secret=${STF_SECRET}
+            - stf
+            - auth-ldap
+            - --port
+            - "3000"
+            - --app-url
+            - https://localhost:443
+            - --secret
+            - nosecret
           envFrom:
             - configMapRef:
                 name: devicehub-env
@@ -447,10 +451,16 @@ spec:
           image: vkcom/devicehub:v1.5.2
           imagePullPolicy: IfNotPresent
           command:
-            - /bin/sh
-            - -lc
-          args:
-            - stf app --port 3000 --auth-url https://${STF_DOMAIN}:${STF_PORT}/${AUTH_URL} --websocket-url https://${STF_DOMAIN}:${STF_PORT}/ --secret=${STF_SECRET}
+            - stf
+            - app
+            - --port
+            - "3000"
+            - --auth-url
+            - https://localhost:443/auth/ldap/
+            - --websocket-url
+            - https://localhost:443/
+            - --secret
+            - nosecret
           envFrom:
             - configMapRef:
                 name: devicehub-env
