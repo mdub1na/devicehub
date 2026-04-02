@@ -410,7 +410,7 @@ spec:
       labels:
         app.kubernetes.io/name: devicehub-auth
       annotations:
-        devicehub/config-revision: "nodeport-31360-v1"
+        devicehub/config-revision: "lan-80-v1"
     spec:
       containers:
         - name: devicehub-auth
@@ -444,7 +444,7 @@ spec:
       labels:
         app.kubernetes.io/name: devicehub-app
       annotations:
-        devicehub/config-revision: "nodeport-31360-v1"
+        devicehub/config-revision: "lan-80-v1"
     spec:
       containers:
         - name: devicehub-app

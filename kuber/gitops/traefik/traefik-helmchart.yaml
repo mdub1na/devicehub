@@ -15,5 +15,12 @@ spec:
     providers:
       kubernetesIngress:
         enabled: true
+    nodeSelector:
+      devicehub.role: control
+    ports:
+      web:
+        hostPort: 80
+      websecure:
+        hostPort: 443
     service:
-      type: LoadBalancer
+      type: ClusterIP
