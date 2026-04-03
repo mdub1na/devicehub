@@ -34,6 +34,7 @@ spec:
 
               MONGO_HOST="devicehub-mongo.mongodb.svc.cluster.local:27017"
               MONGO_URI="mongodb://${MONGO_HOST}/admin"
+              RS_MEMBER_HOST="devicehub-mongo-0.devicehub-mongo.mongodb.svc.cluster.local:27017"
 
               echo "Waiting for MongoDB to accept connections..."
               for i in {1..90}; do
@@ -45,28 +46,39 @@ spec:
 
               RS_OK="$(mongosh "${MONGO_URI}" --quiet --eval 'try { rs.status().ok } catch (e) { 0 }')"
               if [ "${RS_OK}" = "1" ]; then
+                CURRENT_HOST="$(mongosh "${MONGO_URI}" --quiet --eval 'try { rs.conf().members[0].host } catch (e) { "" }')"
+                if [ "${CURRENT_HOST}" != "${RS_MEMBER_HOST}" ]; then
+                  echo "Replica set host mismatch (${CURRENT_HOST} != ${RS_MEMBER_HOST}), applying reconfig..."
+                  mongosh "${MONGO_URI}" --quiet --eval "cfg=rs.conf(); cfg.members[0].host='${RS_MEMBER_HOST}'; cfg.version=cfg.version+1; rs.reconfig(cfg, { force: true })"
+                fi
                 echo "Replica set is already initialized."
                 exit 0
               fi
 
-              echo "Initializing replica set devicehub-rs..."
-              mongosh "${MONGO_URI}" --quiet <<'EOF'
-              rs.initiate({
-                _id: "devicehub-rs",
-                members: [
-                  {
-                    _id: 0,
-                    host: "devicehub-mongo.mongodb.svc.cluster.local:27017",
-                    priority: 2
-                  }
-                ]
-              })
-              EOF
+              CURRENT_HOST="$(mongosh "${MONGO_URI}" --quiet --eval 'try { rs.conf().members[0].host } catch (e) { "" }')"
+              if [ -n "${CURRENT_HOST}" ]; then
+                echo "Replica set exists but is unhealthy, forcing host reconfig to ${RS_MEMBER_HOST}..."
+                mongosh "${MONGO_URI}" --quiet --eval "cfg=rs.conf(); cfg.members[0].host='${RS_MEMBER_HOST}'; cfg.version=cfg.version+1; rs.reconfig(cfg, { force: true })"
+              else
+                echo "Initializing replica set devicehub-rs..."
+                mongosh "${MONGO_URI}" --quiet <<EOF
+                rs.initiate({
+                  _id: "devicehub-rs",
+                  members: [
+                    {
+                      _id: 0,
+                      host: "${RS_MEMBER_HOST}",
+                      priority: 2
+                    }
+                  ]
+                })
+                EOF
+              fi
 
               echo "Waiting for replica set readiness..."
               for i in {1..60}; do
-                RS_OK="$(mongosh "${MONGO_URI}" --quiet --eval 'try { rs.status().ok } catch (e) { 0 }')"
-                if [ "${RS_OK}" = "1" ]; then
+                RS_PRIMARY="$(mongosh "${MONGO_URI}" --quiet --eval 'try { db.hello().isWritablePrimary ? 1 : 0 } catch (e) { 0 }')"
+                if [ "${RS_PRIMARY}" = "1" ]; then
                   echo "Replica set initialized."
                   exit 0
                 fi

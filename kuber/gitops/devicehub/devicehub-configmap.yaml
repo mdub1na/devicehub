@@ -7,7 +7,7 @@ data:
   STF_DOMAIN: devicehub.putmyhexon.ru
   STF_PORT: "443"
   AUTH_URL: auth/ldap/
-  MONGODB_PORT_27017_TCP: mongodb://devicehub-mongo.mongodb.svc.cluster.local:27017
+  MONGODB_PORT_27017_TCP: mongodb://devicehub-mongo.mongodb.svc.cluster.local:27017/?directConnection=true
   LDAP_SEARCH_DN: OU=users,DC=ldap,DC=putmyhexon,DC=ru
   LDAP_SEARCH_FIELD: CN
   LDAP_URL: ldap://openldap.openldap.svc.cluster.local:389
