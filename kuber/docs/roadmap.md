@@ -73,6 +73,11 @@
     - MongoDB external access strategy for Mongo Compass (without manual port-forward)
     - enable TLS for OpenLDAP and secure ldap admin access paths
 
+## Backlog (after baseline stabilization)
+
+- add explicit liveness/readiness/startup health checks for platform services (`argocd-config`, `openldap`) and DeviceHub services
+- define and apply per-service `resources.requests` / `resources.limits` for all core workloads
+
 ## Validation checkpoints
 
 - MongoDB is healthy and persistent
