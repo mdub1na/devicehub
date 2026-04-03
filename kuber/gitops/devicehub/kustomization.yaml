@@ -9,6 +9,8 @@ resources:
   - devicehub-storage-temp-pvc.yaml
   - devicehub-core-services.yaml
   - devicehub-core-deployments.yaml
+  - devicehub-android-services.yaml
+  - devicehub-android-deployments.yaml
   - devicehub-dynamic-proxy.yaml
   - devicehub-issuer.yaml
   - devicehub-ingress.yaml
