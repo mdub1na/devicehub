@@ -149,3 +149,151 @@ spec:
       port: 12040
       targetPort: 12040
       protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: adbd-2
+  labels:
+    app.kubernetes.io/name: adbd-2
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: adbd-2
+  ports:
+    - name: adb
+      port: 5037
+      targetPort: 5037
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: devicehub-provider-2
+  labels:
+    app.kubernetes.io/name: devicehub-provider-2
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: devicehub-provider-2
+  ports:
+    - name: p12041
+      port: 12041
+      targetPort: 12041
+      protocol: TCP
+    - name: p12042
+      port: 12042
+      targetPort: 12042
+      protocol: TCP
+    - name: p12043
+      port: 12043
+      targetPort: 12043
+      protocol: TCP
+    - name: p12044
+      port: 12044
+      targetPort: 12044
+      protocol: TCP
+    - name: p12045
+      port: 12045
+      targetPort: 12045
+      protocol: TCP
+    - name: p12046
+      port: 12046
+      targetPort: 12046
+      protocol: TCP
+    - name: p12047
+      port: 12047
+      targetPort: 12047
+      protocol: TCP
+    - name: p12048
+      port: 12048
+      targetPort: 12048
+      protocol: TCP
+    - name: p12049
+      port: 12049
+      targetPort: 12049
+      protocol: TCP
+    - name: p12050
+      port: 12050
+      targetPort: 12050
+      protocol: TCP
+    - name: p12051
+      port: 12051
+      targetPort: 12051
+      protocol: TCP
+    - name: p12052
+      port: 12052
+      targetPort: 12052
+      protocol: TCP
+    - name: p12053
+      port: 12053
+      targetPort: 12053
+      protocol: TCP
+    - name: p12054
+      port: 12054
+      targetPort: 12054
+      protocol: TCP
+    - name: p12055
+      port: 12055
+      targetPort: 12055
+      protocol: TCP
+    - name: p12056
+      port: 12056
+      targetPort: 12056
+      protocol: TCP
+    - name: p12057
+      port: 12057
+      targetPort: 12057
+      protocol: TCP
+    - name: p12058
+      port: 12058
+      targetPort: 12058
+      protocol: TCP
+    - name: p12059
+      port: 12059
+      targetPort: 12059
+      protocol: TCP
+    - name: p12060
+      port: 12060
+      targetPort: 12060
+      protocol: TCP
+    - name: p12061
+      port: 12061
+      targetPort: 12061
+      protocol: TCP
+    - name: p12062
+      port: 12062
+      targetPort: 12062
+      protocol: TCP
+    - name: p12063
+      port: 12063
+      targetPort: 12063
+      protocol: TCP
+    - name: p12064
+      port: 12064
+      targetPort: 12064
+      protocol: TCP
+    - name: p12065
+      port: 12065
+      targetPort: 12065
+      protocol: TCP
+    - name: p12066
+      port: 12066
+      targetPort: 12066
+      protocol: TCP
+    - name: p12067
+      port: 12067
+      targetPort: 12067
+      protocol: TCP
+    - name: p12068
+      port: 12068
+      targetPort: 12068
+      protocol: TCP
+    - name: p12069
+      port: 12069
+      targetPort: 12069
+      protocol: TCP
+    - name: p12070
+      port: 12070
+      targetPort: 12070
+      protocol: TCP
