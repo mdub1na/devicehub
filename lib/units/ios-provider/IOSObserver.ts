@@ -80,40 +80,24 @@ export default class IOSObserver extends EventEmitter<IOSSimEvents> {
         return serial
     }
 
-    private isValidIosIdentifier(serial: string): boolean {
-        // Real iOS device UDID (commonly 24 hex chars, sometimes 40 hex chars)
-        const udid24 = /^[0-9A-Fa-f]{24}$/
-        const udid40 = /^[0-9A-Fa-f]{40}$/
-        // iOS simulator UUID format
-        const simUuid = /^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$/
-
-        return udid24.test(serial) || udid40.test(serial) || simUuid.test(serial)
-    }
-
     listen = (): void => {
         new Promise(async() => {
             if (!this.usbListenerStarted) {
                 const currentDevices = usb.listDevices()
                 for (const device of currentDevices) {
                     if (!device.serialNumber || device.vendorId !== 1452) continue
-                    const serial = this.formatUDID(device.serialNumber)
-                    if (!this.isValidIosIdentifier(serial)) continue
-                    this.emit('attached', serial, false)
+                    this.emit('attached', this.formatUDID(device.serialNumber), false)
                 }
 
                 usb.watchDevices((err, event) => {
                     if (!event.serialNumber) {
                         return
                     }
-                    const serial = this.formatUDID(event.serialNumber)
-                    if (!this.isValidIosIdentifier(serial)) {
-                        return
-                    }
 
                     if (event.eventType === 'Connected' && event.device?.vendorId === 1452) {
-                        this.emit('attached', serial, false)
+                        this.emit('attached', this.formatUDID(event.serialNumber), false)
                     } else {
-                        this.emit('detached', serial, false)
+                        this.emit('detached', this.formatUDID(event.serialNumber), false)
                     }
                 })
 
@@ -133,3 +117,4 @@ export default class IOSObserver extends EventEmitter<IOSSimEvents> {
         clearTimeout(this.listnerInterval)
     }
 }
+
