@@ -3,6 +3,9 @@ set -euo pipefail
 
 REPO_ROOT="/Users/alfafermer/IdeaProjects/devicehub"
 NODE_BIN="${NODE_BIN:-/opt/homebrew/bin/node}"
+PY_USER_BASE_BIN="$(python3 -m site --user-base 2>/dev/null)/bin"
+
+export PATH="${PY_USER_BASE_BIN}:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${PATH:-}"
 
 if [[ ! -x "${NODE_BIN}" ]]; then
   NODE_BIN="/usr/local/bin/node"
@@ -10,6 +13,11 @@ fi
 
 if [[ ! -x "${NODE_BIN}" ]]; then
   echo "node binary not found. Set NODE_BIN explicitly." >&2
+  exit 1
+fi
+
+if ! command -v idb >/dev/null 2>&1; then
+  echo "idb not found in PATH=${PATH}" >&2
   exit 1
 fi
 
