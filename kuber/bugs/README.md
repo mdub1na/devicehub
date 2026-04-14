@@ -31,3 +31,28 @@
 - Do not patch core repository code now.
 - Run `ios-provider` without serial filtering and handle device selection operationally.
 - Keep this issue documented and return to it later as a dedicated upstream fix.
+
+## Bug: `ios-provider` detects non-iOS USB dongles as phantom devices
+
+### Status
+- Confirmed in local lab
+- Priority: high (causes noisy restarts and ghost devices in UI)
+- Scope: runtime environment + USB device detection behavior
+
+### Symptoms
+- `ios-provider` logs phantom device like `7423J07` even when only iPhones are expected.
+- Device appears in DeviceHub UI with broken state (`display.url` empty), may trigger `No display url`.
+- Provider repeatedly restarts worker process for phantom serial.
+
+### Root cause (observed)
+- A non-iPhone USB dongle (Bluetooth mouse receiver) connected to Mac mini was detected by provider USB observer as an Apple-like serial.
+- The serial was treated as an iOS device candidate and entered normal registration flow.
+
+### Resolution in lab
+- Physically unplug non-iOS USB dongle from Mac mini.
+- Restart `ios-provider`.
+- Reconnect only real iPhones.
+- Result: both real iPhones detected correctly, UI control works.
+
+### Preventive note
+- Keep Mac mini USB bus clean from unrelated dongles while running iOS farm.
