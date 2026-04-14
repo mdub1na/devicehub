@@ -60,7 +60,8 @@ if [[ -n "${IOS_SERIALS}" ]]; then
   for serial in "${ios_serial_array[@]}"; do
     trimmed="$(echo "${serial}" | xargs)"
     if [[ -n "${trimmed}" ]]; then
-      ARGS+=(--serial "${trimmed}")
+      # ios-provider expects serials as positional args: "ios-provider [serial..]"
+      ARGS+=("${trimmed}")
     fi
   done
 fi
