@@ -34,12 +34,6 @@ CONNECT_SUB="tcp://${K3S_NODE_IP}:31250"
 CONNECT_PUSH="tcp://${K3S_NODE_IP}:31270"
 STORAGE_URL="http://${K3S_NODE_IP}:31300/"
 
-declare -a IOS_SERIAL_ARRAY=()
-if [[ -n "${IOS_SERIALS}" ]]; then
-  # ios-provider.env format: IOS_SERIALS="udid-1,udid-2"
-  IFS=',' read -r -a IOS_SERIAL_ARRAY <<<"${IOS_SERIALS}"
-fi
-
 ARGS=(
   ios-provider
   --provider "${IOS_PROVIDER_NAME}"
@@ -58,12 +52,16 @@ ARGS=(
   --wda-range-max "${IOS_WDA_RANGE_MAX}"
 )
 
-for serial in "${IOS_SERIAL_ARRAY[@]}"; do
-  trimmed="$(echo "${serial}" | xargs)"
-  if [[ -n "${trimmed}" ]]; then
-    ARGS+=(--serial "${trimmed}")
-  fi
-done
+if [[ -n "${IOS_SERIALS}" ]]; then
+  # ios-provider.env format: IOS_SERIALS="udid-1,udid-2"
+  IFS=',' read -r -a ios_serial_array <<<"${IOS_SERIALS}"
+  for serial in "${ios_serial_array[@]}"; do
+    trimmed="$(echo "${serial}" | xargs)"
+    if [[ -n "${trimmed}" ]]; then
+      ARGS+=(--serial "${trimmed}")
+    fi
+  done
+fi
 
 echo "Starting iOS provider:"
 echo "  provider=${IOS_PROVIDER_NAME}"
