@@ -3,6 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ENV_FILE="${SCRIPT_DIR}/ios-provider.env"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../../.." && pwd)"
 
 if [[ ! -f "${ENV_FILE}" ]]; then
   echo "Missing env file: ${ENV_FILE}" >&2
@@ -70,4 +71,11 @@ echo "  connect-push=${CONNECT_PUSH}"
 echo "  storage-url=${STORAGE_URL}"
 echo "  public-ip=${MAC_MINI_IP}"
 
-stf "${ARGS[@]}"
+if [[ ! -f "${REPO_ROOT}/bin/stf.mjs" ]]; then
+  echo "Cannot find ${REPO_ROOT}/bin/stf.mjs" >&2
+  echo "Run this script from a DeviceHub repository checkout." >&2
+  exit 1
+fi
+
+cd "${REPO_ROOT}"
+node --import "${REPO_ROOT}/lib/util/instrument.mjs" "${REPO_ROOT}/bin/stf.mjs" "${ARGS[@]}"
