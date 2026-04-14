@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ios-provider
+  labels:
+    app.kubernetes.io/name: ios-provider
+    app.kubernetes.io/component: ios-bridge
+spec:
+  type: ClusterIP
+  ports:
+    - name: screen-18000
+      port: 18000
+      targetPort: 18000
+      protocol: TCP
+    - name: screen-18001
+      port: 18001
+      targetPort: 18001
+      protocol: TCP
+    - name: connect-18200
+      port: 18200
+      targetPort: 18200
+      protocol: TCP
+    - name: connect-18201
+      port: 18201
+      targetPort: 18201
+      protocol: TCP
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: ios-provider
+  labels:
+    app.kubernetes.io/name: ios-provider
+    app.kubernetes.io/component: ios-bridge
+subsets:
+  - addresses:
+      - ip: 192.168.0.104
+    ports:
+      - name: screen-18000
+        port: 18000
+        protocol: TCP
+      - name: screen-18001
+        port: 18001
+        protocol: TCP
+      - name: connect-18200
+        port: 18200
+        protocol: TCP
+      - name: connect-18201
+        port: 18201
+        protocol: TCP

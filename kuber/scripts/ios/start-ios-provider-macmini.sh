@@ -23,7 +23,9 @@ set +a
 : "${IOS_PROVIDER_NAME:?IOS_PROVIDER_NAME is required in ios-provider.env}"
 
 # Optional values from ios-provider.env
-IOS_SCREEN_WS_URL_PATTERN="${IOS_SCREEN_WS_URL_PATTERN:-ws://${MAC_MINI_IP}:<%= publicPort %>}"
+IOS_PROVIDER_PUBLIC_HOST="${IOS_PROVIDER_PUBLIC_HOST:-${MAC_MINI_IP}}"
+IOS_SCREEN_WS_URL_PATTERN="${IOS_SCREEN_WS_URL_PATTERN:-ws://${IOS_PROVIDER_PUBLIC_HOST}:<%= publicPort %>}"
+IOS_CONNECT_URL_PATTERN="${IOS_CONNECT_URL_PATTERN:-}"
 IOS_PORT_RANGE_MIN="${IOS_PORT_RANGE_MIN:-8100}"
 IOS_PORT_RANGE_MAX="${IOS_PORT_RANGE_MAX:-8200}"
 IOS_SCREEN_WS_RANGE_MIN="${IOS_SCREEN_WS_RANGE_MIN:-18000}"
@@ -39,7 +41,7 @@ STORAGE_URL="http://${K3S_NODE_IP}:31300/"
 ARGS=(
   ios-provider
   --provider "${IOS_PROVIDER_NAME}"
-  --public-ip "${MAC_MINI_IP}"
+  --public-ip "${IOS_PROVIDER_PUBLIC_HOST}"
   --host "${MAC_MINI_IP}"
   --screen-ws-url-pattern "${IOS_SCREEN_WS_URL_PATTERN}"
   --storage-url "${STORAGE_URL}"
@@ -53,6 +55,12 @@ ARGS=(
   --wda-range-min "${IOS_WDA_RANGE_MIN}"
   --wda-range-max "${IOS_WDA_RANGE_MAX}"
 )
+
+if [[ -n "${IOS_CONNECT_URL_PATTERN}" ]]; then
+  ARGS+=(
+    --connect-url-pattern "${IOS_CONNECT_URL_PATTERN}"
+  )
+fi
 
 if [[ -n "${IOS_SERIALS}" ]]; then
   # ios-provider.env format: IOS_SERIALS="udid-1,udid-2"
@@ -71,7 +79,7 @@ echo "  provider=${IOS_PROVIDER_NAME}"
 echo "  connect-sub=${CONNECT_SUB}"
 echo "  connect-push=${CONNECT_PUSH}"
 echo "  storage-url=${STORAGE_URL}"
-echo "  public-ip=${MAC_MINI_IP}"
+echo "  public-ip=${IOS_PROVIDER_PUBLIC_HOST}"
 
 if [[ ! -f "${STF_BUILD_BIN}" ]]; then
   echo "Cannot find ${STF_BUILD_BIN}" >&2

@@ -6,6 +6,7 @@ namespace: mongodb
 resources:
   - namespace.yaml
   - mongodb-service.yaml
+  - mongodb-service-external.yaml
   - mongodb-pvc.yaml
   - mongodb-statefulset.yaml
   - mongodb-init-job.yaml
