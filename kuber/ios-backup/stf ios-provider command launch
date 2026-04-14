@@ -1,0 +1,85 @@
+stf ios-provider \
+    --connect-sub tcp://192.168.0.106:7250 \
+    --connect-push tcp://192.168.0.106:7270 \
+    --connect-app-dealer tcp://192.168.0.106:7160 \
+    --connect-dev-dealer tcp://192.168.0.106:7260 \
+    --screen-ws-url-pattern 'wss://devicehub.putmyhexon.ru:443/d/ios-provider/<%= publicPort %>/' \
+    --public-ip devicehub.putmyhexon.ru \
+    --provider ios-provider \
+    --storage-url https://devicehub.putmyhexon.ru:443/ \
+    --secret nosecret \
+    --host 192.168.0.104 \
+    --no-cleanup
+
+
+export ANDROID_HOME=$HOME/Users/minihex/Library/Android/SDK
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+export PATH=$PATH:$ANDROID_HOME/emulator
+
+
+Опции:
+  -h, --help                   Show help.                          [булевый тип]
+      --usbmux-path            Path to usbmux sock file. (note: doesnt do anythi
+                               ng at the moment)
+                              [строковой тип] [по умолчанию: "/var/run/usbmuxd"]
+      --wda-path               Full path for WebDriverAgent repository to build
+                               upon         [строковой тип] [по умолчанию: null]
+      --boot-complete-timeout  How long to wait for boot to complete during devi
+                               ce setup.           [число] [по умолчанию: 60000]
+      --cleanup                Attempt to reset the device between uses by unins
+                               tallingapps, resetting accounts and clearing cach
+                               es. Does not do a perfect job currently. Negate w
+                               ith --no-cleanup.
+                                              [булевый тип] [по умолчанию: true]
+      --port-range-min         Min port for forwarding to the ios device
+                                                    [число] [по умолчанию: 8100]
+      --port-range-max         Max port for forwarding to the ios device
+                                                    [число] [по умолчанию: 8200]
+      --screen-ws-range-min    Min port for screen websocket.
+                                                   [число] [по умолчанию: 18000]
+      --screen-ws-range-max    Max port for screen websocket
+                                                   [число] [по умолчанию: 18100]
+      --wda-range-min          Min wda public port.[число] [по умолчанию: 18200]
+      --wda-range-max          Max wda public port [число] [по умолчанию: 18300]
+  -p, --connect-push           ZeroMQ PULL endpoint to connect to.
+                                                           [массив] [необходимо]
+  -s, --connect-sub            ZeroMQ PUB endpoint to connect to.
+                                                           [массив] [необходимо]
+      --connect-url-pattern    The URL pattern to use for `adb connect`.
+                     [строковой тип] [по умолчанию: "${publicIp}:${publicPort}"]
+  -t, --group-timeout          Timeout in seconds for automatic release of inact
+                               ive devices.          [число] [по умолчанию: 900]
+      --heartbeat-interval     Send interval in milliseconds for heartbeat messa
+                               ges.                [число] [по умолчанию: 10000]
+      --lock-rotation          Whether to lock rotation when devices are being u
+                               sed. Otherwise changing device orientation may no
+                               t always work due to sensitive sensors quickly or
+                                immediately reverting it back to the physical or
+                               ientation.                          [булевый тип]
+  -n, --provider               Name of the provider.[строковой тип] [необходимо]
+      --public-ip              The IP or hostname to use in URLs.
+                                                    [строковой тип] [необходимо]
+      --screen-jpeg-quality    The JPG quality to use for the screen.
+                                                      [число] [по умолчанию: 80]
+      --screen-ping-interval   The interval at which to send ping messages to ke
+                               ep the screen WebSocket alive.
+                                                   [число] [по умолчанию: 30000]
+      --screen-reset           Go back to home screen and reset screen rotation
+                               when user releases device. Negate with --no-scree
+                               n-reset.       [булевый тип] [по умолчанию: true]
+      --screen-ws-url-pattern  The URL pattern to use for the screen WebSocket.
+                [строковой тип] [по умолчанию: "ws://${publicIp}:${publicPort}"]
+  -r, --storage-url            The URL to the storage unit.
+                                                    [строковой тип] [необходимо]
+      --connect-app-dealer     App-side ZeroMQ DEALER endpoint to connect to.
+                                                           [массив] [необходимо]
+      --connect-dev-dealer     Device-side ZeroMQ DEALER endpoint to connect to.
+                                                           [массив] [необходимо]
+      --host                   Provider hostname.
+                        [строковой тип] [необходимо] [по умолчанию: "127.0.0.1"]
+      --secret                 The secret to use for auth JSON Web Tokens. Anyon
+                               e who knows this token can freely enter the syste
+                               m if they want, so keep it safe.
+                         [строковой тип] [необходимо] [по умолчанию: "nosecret"]
+  -V, --version                Показать номер версии               [булевый тип]

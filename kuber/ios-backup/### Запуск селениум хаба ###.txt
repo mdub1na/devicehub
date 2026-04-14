@@ -1,0 +1,17 @@
+### Запуск селениум хаба ###
+
+java -jar selenium-server-4.39.0.jar hub
+
+
+### Запуск селениум нод ###
+
+java -jar selenium-server-4.39.0.jar node --config /Users/minihex/Desktop/node-ios.toml
+
+java -jar selenium-server-4.39.0.jar node --config /Users/minihex/Desktop/node-android.toml
+
+
+### Запуск апиумов ###
+
+appium --config /Users/minihex/Desktop/appium-ios.yml
+
+appium --config /Users/minihex/Desktop/appium-android.yml
