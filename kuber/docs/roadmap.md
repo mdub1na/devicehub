@@ -77,6 +77,7 @@
 
 - add explicit liveness/readiness/startup health checks for platform services (`argocd-config`, `openldap`) and DeviceHub services
 - define and apply per-service `resources.requests` / `resources.limits` for all core workloads
+- write a dedicated runbook for `ios-provider` installation and operations (macOS prerequisites, Xcode/WDA signing, `idb`, `launchctl`, troubleshooting)
 
 ## Validation checkpoints
 

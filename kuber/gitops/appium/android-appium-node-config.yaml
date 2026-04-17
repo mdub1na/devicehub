@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: android-appium-node-config
+  labels:
+    app.kubernetes.io/name: android-appium-node-config
+data:
+  node-android.toml: |
+    [server]
+    port = 6666
+
+    [node]
+    detect-drivers = false
+
+    [relay]
+    url = "http://127.0.0.1:4733"
+    status-endpoint = "/status"
+    configs = [
+      "1",
+      "{ \"platformName\": \"Android\", \"appium:automationName\": \"UiAutomator2\", \"appium:remoteAdbHost\": \"adbd\", \"appium:adbPort\": 5037 }"
+    ]
