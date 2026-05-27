@@ -121,6 +121,10 @@ spec:
             - "12040"
             - --heartbeat-interval
             - "10000"
+            - --screen-jpeg-quality
+            - "60"
+            - --screen-frame-rate
+            - "40"
             - --screen-ws-url-pattern
             - wss://devicehub.putmyhexon.ru/d/devicehub-provider/<%= publicPort %>/
             - --secret
@@ -252,6 +256,10 @@ spec:
             - "12070"
             - --heartbeat-interval
             - "10000"
+            - --screen-jpeg-quality
+            - "60"
+            - --screen-frame-rate
+            - "40"
             - --screen-ws-url-pattern
             - wss://devicehub.putmyhexon.ru/d/devicehub-provider-2/<%= publicPort %>/
             - --secret

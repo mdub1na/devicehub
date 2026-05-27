@@ -14,8 +14,8 @@ Deploy DeviceHub as a Kubernetes-based mobile device farm on the current Proxmox
 
 | Node | IP | CPU | RAM | Disk | Role |
 | --- | --- | --- | --- | --- | --- |
-| `k3s-control` | `192.168.0.121` | `4` | `6Gi` | `128Gi` | control / GitOps |
-| `k3s-worker-1` | `192.168.0.122` | `6` | `16Gi` | `128Gi` | Android execution |
+| `k3s-control` | `192.168.0.121` | `4` | `8Gi` | `128Gi` | control / GitOps |
+| `k3s-worker-1` | `192.168.0.122` | `4` | `8Gi` | `128Gi` | Android execution |
 | `k3s-worker-2` | `192.168.0.123` | `4` | `8Gi` | `128Gi` | storage / stateful |
 
 ### Apple hardware
