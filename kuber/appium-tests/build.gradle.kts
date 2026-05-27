@@ -1,0 +1,47 @@
+plugins {
+    java
+}
+
+group = "ru.devicehub"
+version = "0.1.0-SNAPSHOT"
+
+dependencies {
+    testImplementation("io.appium:java-client:10.0.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.14.4")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    options.release.set(17)
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+
+    testClassesDirs = sourceSets.test.get().output.classesDirs
+    classpath = sourceSets.test.get().runtimeClasspath
+    outputs.upToDateWhen { false }
+
+    testLogging {
+        events("passed", "skipped", "failed")
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+    }
+}
+
+tasks.register<Test>("localAndroidTest") {
+    description = "Runs Android Appium tests against a locally connected Android device."
+    group = "verification"
+
+    useJUnitPlatform {
+        includeTags("local")
+    }
+}
+
+tasks.register<Test>("devicehubAndroidTest") {
+    description = "Runs Android Appium tests against a DeviceHub-managed device."
+    group = "verification"
+
+    useJUnitPlatform {
+        includeTags("devicehub")
+    }
+}
