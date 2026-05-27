@@ -10,6 +10,9 @@ public final class TestConfig {
     private static final String DEFAULT_DEVICE_NAME = "Android";
     private static final String DEFAULT_BROWSER_NAME = "Chrome";
     private static final String DEFAULT_TARGET_URL = "https://example.com";
+    private static final String DEFAULT_DEVICEHUB_DEVICE_TYPE = "";
+    private static final int DEFAULT_DEVICEHUB_AMOUNT = 1;
+    private static final int DEFAULT_DEVICEHUB_TIMEOUT_SECONDS = 600;
     private static final Duration DEFAULT_EXPLICIT_WAIT = Duration.ofSeconds(20);
     private static final Duration DEFAULT_NEW_COMMAND_TIMEOUT = Duration.ofSeconds(120);
 
@@ -53,11 +56,83 @@ public final class TestConfig {
         return Path.of(env("TEST_ARTIFACTS_DIR", "target/appium-artifacts"));
     }
 
+    public static String deviceHubBaseUrl() {
+        String value = requiredEnv("DEVICEHUB_BASE_URL");
+        if (value.endsWith("/api/v1")) {
+            return value;
+        }
+        return value.replaceAll("/+$", "") + "/api/v1";
+    }
+
+    public static String deviceHubToken() {
+        return requiredEnv("DEVICEHUB_TOKEN");
+    }
+
+    public static int deviceHubAmount() {
+        return intEnv("DEVICEHUB_AMOUNT", DEFAULT_DEVICEHUB_AMOUNT);
+    }
+
+    public static int deviceHubTimeoutSeconds() {
+        return intEnv("DEVICEHUB_TIMEOUT_SECONDS", DEFAULT_DEVICEHUB_TIMEOUT_SECONDS);
+    }
+
+    public static boolean deviceHubNeedAmount() {
+        return booleanEnv("DEVICEHUB_NEED_AMOUNT", true);
+    }
+
+    public static String deviceHubRunName() {
+        return env("DEVICEHUB_RUN_NAME", "appium-local-capture-smoke-" + System.currentTimeMillis());
+    }
+
+    public static String deviceHubDeviceType() {
+        return env("DEVICEHUB_DEVICE_TYPE", DEFAULT_DEVICEHUB_DEVICE_TYPE);
+    }
+
+    public static String deviceHubAbi() {
+        return env("DEVICEHUB_ABI", "");
+    }
+
+    public static String deviceHubModel() {
+        return env("DEVICEHUB_MODEL", "");
+    }
+
+    public static String deviceHubSdk() {
+        return env("DEVICEHUB_SDK", "");
+    }
+
+    public static String deviceHubVersion() {
+        return env("DEVICEHUB_VERSION", "");
+    }
+
     private static String env(String name, String defaultValue) {
         String value = System.getenv(name);
         if (value == null || value.isBlank()) {
             return defaultValue;
         }
         return value;
+    }
+
+    private static String requiredEnv(String name) {
+        String value = System.getenv(name);
+        if (value == null || value.isBlank()) {
+            throw new IllegalStateException(name + " environment variable is required");
+        }
+        return value;
+    }
+
+    private static int intEnv(String name, int defaultValue) {
+        String value = env(name, "");
+        if (value.isBlank()) {
+            return defaultValue;
+        }
+        return Integer.parseInt(value);
+    }
+
+    private static boolean booleanEnv(String name, boolean defaultValue) {
+        String value = env(name, "");
+        if (value.isBlank()) {
+            return defaultValue;
+        }
+        return Boolean.parseBoolean(value);
     }
 }

@@ -47,3 +47,43 @@ Optional variables:
 - `TEST_ARTIFACTS_DIR` defaults to `target/appium-artifacts`
 
 Failure artifacts are saved under `target/appium-artifacts`.
+
+## DeviceHub Capture Smoke
+
+This smoke test checks only the DeviceHub autotests API lifecycle:
+
+1. Capture one Android device.
+2. Print captured device data.
+3. Free the captured group in `finally`.
+
+It does not start an Appium session yet.
+
+```bash
+cd kuber/appium-tests
+DEVICEHUB_BASE_URL=https://<devicehub-host> \
+DEVICEHUB_TOKEN=<access-token> \
+./gradlew devicehubAndroidTest
+```
+
+`DEVICEHUB_BASE_URL` can be either the root DeviceHub URL or the `/api/v1` URL.
+
+Optional DeviceHub variables:
+
+- `DEVICEHUB_AMOUNT` defaults to `1`
+- `DEVICEHUB_TIMEOUT_SECONDS` defaults to `600`
+- `DEVICEHUB_NEED_AMOUNT` defaults to `true`
+- `DEVICEHUB_RUN_NAME` defaults to a generated smoke run name
+- `DEVICEHUB_DEVICE_TYPE` defaults to empty because current DeviceHub installations may use different internal platform field names
+- `DEVICEHUB_ABI`, `DEVICEHUB_MODEL`, `DEVICEHUB_SDK`, `DEVICEHUB_VERSION` default to empty filters
+
+## DeviceHub Appium Smoke
+
+This smoke test captures one DeviceHub device, uses its `serial` as Appium `udid`, runs the Chrome smoke through Appium, and frees the DeviceHub group in `finally`.
+
+```bash
+cd kuber/appium-tests
+DEVICEHUB_BASE_URL=https://<devicehub-host> \
+DEVICEHUB_TOKEN=<access-token> \
+APPIUM_SERVER_URL=https://<appium-grid-host> \
+./gradlew devicehubAppiumAndroidTest
+```

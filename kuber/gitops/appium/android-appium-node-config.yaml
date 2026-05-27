@@ -17,5 +17,5 @@ data:
     status-endpoint = "/status"
     configs = [
       "1",
-      "{ \"platformName\": \"Android\", \"appium:automationName\": \"UiAutomator2\", \"appium:remoteAdbHost\": \"adbd\", \"appium:adbPort\": 5037 }"
+      "{ \"platformName\": \"Android\", \"appium:automationName\": \"UiAutomator2\", \"appium:remoteAdbHost\": \"adbd.devicehub.svc.cluster.local\", \"appium:adbPort\": 5037 }"
     ]

@@ -10,6 +10,10 @@ public final class DriverFactory {
     }
 
     public static AndroidDriver createAndroidBrowserDriver() {
+        return createAndroidBrowserDriver(TestConfig.udid());
+    }
+
+    public static AndroidDriver createAndroidBrowserDriver(String udid) {
         UiAutomator2Options options = new UiAutomator2Options()
             .setAutomationName("UiAutomator2")
             .setPlatformName("Android")
@@ -19,7 +23,6 @@ public final class DriverFactory {
 
         options.setCapability(CapabilityType.BROWSER_NAME, TestConfig.browserName());
 
-        String udid = TestConfig.udid();
         if (!udid.isBlank()) {
             options.setUdid(udid);
         }

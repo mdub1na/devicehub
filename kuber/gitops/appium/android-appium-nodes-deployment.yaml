@@ -38,7 +38,7 @@ spec:
             - uiautomator2
           env:
             - name: ANDROID_ADB_SERVER_HOST
-              value: adbd
+              value: adbd.devicehub.svc.cluster.local
             - name: ANDROID_ADB_SERVER_PORT
               value: "5037"
           ports:
