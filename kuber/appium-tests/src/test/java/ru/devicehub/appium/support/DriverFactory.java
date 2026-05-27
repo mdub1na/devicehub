@@ -23,6 +23,12 @@ public final class DriverFactory {
 
         options.setCapability(CapabilityType.BROWSER_NAME, TestConfig.browserName());
 
+        String remoteAdbHost = TestConfig.appiumRemoteAdbHost();
+        if (!remoteAdbHost.isBlank()) {
+            options.setCapability("appium:remoteAdbHost", remoteAdbHost);
+            options.setCapability("appium:adbPort", TestConfig.appiumAdbPort());
+        }
+
         if (!udid.isBlank()) {
             options.setUdid(udid);
         }

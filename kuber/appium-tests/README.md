@@ -87,3 +87,10 @@ DEVICEHUB_TOKEN=<access-token> \
 APPIUM_SERVER_URL=https://<appium-grid-host> \
 ./gradlew devicehubAppiumAndroidTest
 ```
+
+When Appium runs outside the ADB server host, pass remote ADB capabilities:
+
+```bash
+APPIUM_REMOTE_ADB_HOST=adbd.devicehub.svc.cluster.local
+APPIUM_ADB_PORT=5037
+```

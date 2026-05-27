@@ -36,6 +36,8 @@ spec:
             - /
             - --use-drivers
             - uiautomator2
+            - --allow-insecure
+            - chromedriver_autodownload
           env:
             - name: ANDROID_ADB_SERVER_HOST
               value: adbd.devicehub.svc.cluster.local

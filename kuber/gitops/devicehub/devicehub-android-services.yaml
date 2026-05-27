@@ -13,6 +13,10 @@ spec:
       port: 5037
       targetPort: 5037
       protocol: TCP
+    - name: uiautomator2-8200
+      port: 8200
+      targetPort: 8200
+      protocol: TCP
 ---
 apiVersion: v1
 kind: Service
@@ -164,6 +168,10 @@ spec:
     - name: adb
       port: 5037
       targetPort: 5037
+      protocol: TCP
+    - name: uiautomator2-8200
+      port: 8200
+      targetPort: 8200
       protocol: TCP
 ---
 apiVersion: v1
