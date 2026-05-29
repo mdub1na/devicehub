@@ -8,6 +8,8 @@
 - `MongoDB`
 - `OpenLDAP`
 - `phpLDAPadmin`
+- `Traefik`
+- `cert-manager`
 - Appium Grid control plane
 - Android Appium nodes
 - `mitmproxy` / `mitmweb`
@@ -43,8 +45,8 @@
 
 | Node | Role | Main workloads |
 | --- | --- | --- |
-| `k3s-control` | control / GitOps | `argocd`, light control-plane infra |
-| `k3s-worker-1` | Android execution | `adbd`, `devicehub-provider`, Android device workers, Android Appium nodes |
+| `k3s-control` | control / GitOps | `argocd`, `traefik`, light control-plane infra |
+| `k3s-worker-1` | Android execution | `adbd`, `adbd-2`, `devicehub-provider`, `devicehub-provider-2`, Android device workers, Android Appium nodes |
 | `k3s-worker-2` | storage / stateful | `mongodb`, `openldap`, `devicehub-storage-temp`, Appium Grid control plane, observability |
 | `Mac mini` | iOS execution | WebDriverAgent, iOS Appium nodes, Apple tooling |
 
@@ -52,8 +54,8 @@
 
 | Workload | Required label | Reason |
 | --- | --- | --- |
-| `adbd` | `devicehub.role=android` | owns USB-attached Android devices |
-| `devicehub-provider` | `devicehub.role=android` | must run next to `adbd` |
+| `adbd`, `adbd-2` | `devicehub.role=android` | own USB-attached Android devices |
+| `devicehub-provider`, `devicehub-provider-2` | `devicehub.role=android` | must run next to their ADB endpoints |
 | `mongodb` | `devicehub.role=storage` | fixed persistent data |
 | `openldap` | `devicehub.role=storage` | fixed persistent data |
 | `devicehub-storage-temp` | `devicehub.role=storage` | fixed persistent temp storage backend |
@@ -81,6 +83,8 @@ Everything else stays movable in phase 1.
 ### Singleton
 
 - all `argocd` workloads
+- `traefik`
+- `cert-manager`
 - all `mongodb` workloads
 - all `openldap` workloads
 - `devicehub-app`
@@ -110,10 +114,10 @@ Everything else stays movable in phase 1.
 
 ### Paired scaling
 
-- `adbd`
-- `devicehub-provider`
+- `adbd` + `devicehub-provider`
+- `adbd-2` + `devicehub-provider-2`
 
-These two scale together as one Android execution pair.
+Each ADB/provider pair scales and rolls together as one Android execution pair.
 
 ## Kubernetes resource types
 
@@ -150,14 +154,16 @@ These two scale together as one Android execution pair.
 | Setting | Value |
 | --- | --- |
 | name | `devicehub-platform` |
-| repo | `git@github.com:mdub1na/devicehub.git` |
+| repo | `https://github.com/mdub1na/devicehub.git` |
 | cluster | `https://kubernetes.default.svc` |
-| namespaces | `argocd`, `mongodb`, `openldap`, `devicehub`, `appium`, `mitmproxy`, `observability` |
+| namespaces | `argocd`, `mongodb`, `openldap`, `devicehub`, `appium`, `mitmproxy`, `observability`, `kube-system` |
 | allowed cluster-scoped resources | `Namespace` |
 
 ### Applications using the shared AppProject
 
 - `argocd`
+- `traefik`
+- `cert-manager`
 - `mongodb`
 - `openldap`
 - `devicehub`

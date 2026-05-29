@@ -40,8 +40,8 @@ Deploy DeviceHub as a Kubernetes-based mobile device farm on the current Proxmox
 
 ## Access requirements
 
-- phase 1 validation: LAN-first
-- later target: Internet exposure with HTTPS
+- LAN validation remains useful for low-level diagnostics
+- public HTTPS access is enabled through `Traefik`, `cert-manager`, and Let's Encrypt
 - `phpLDAPadmin` must remain available
 
 ## Capacity targets
@@ -64,7 +64,7 @@ Deploy DeviceHub as a Kubernetes-based mobile device farm on the current Proxmox
 ## Agreed platform stack
 
 - ingress: `Traefik`
+- HTTPS certificates: `cert-manager + Let's Encrypt`
 - metrics: `Prometheus + Grafana`
 - logs: `Loki + Promtail`
 - alerting: `Alertmanager`
-- later HTTPS: `cert-manager + Let's Encrypt`

@@ -57,27 +57,25 @@
     - `promtail`
     - `alertmanager`
 
-12. Configure LAN ingress
+12. Configure ingress and HTTPS
     - DeviceHub
     - `phpldapadmin`
     - Appium Grid
     - `mitmweb`
-
-13. Later public exposure
-    - public DNS
+    - Argo CD
     - `cert-manager`
-    - Let's Encrypt
-    - HTTPS
-    - Argo CD ingress access without manual port-forward
+    - Let's Encrypt certificates
+
+13. Later hardening
     - Argo CD IP whitelist (allow only trusted public IP ranges)
-    - MongoDB external access strategy for Mongo Compass (without manual port-forward)
     - enable TLS for OpenLDAP and secure ldap admin access paths
+    - move plaintext credentials into Kubernetes Secret / sealed secret flow
 
 ## Backlog (after baseline stabilization)
 
 - add explicit liveness/readiness/startup health checks for platform services (`argocd-config`, `openldap`) and DeviceHub services
 - define and apply per-service `resources.requests` / `resources.limits` for all core workloads
-- write a dedicated runbook for `ios-provider` installation and operations (macOS prerequisites, Xcode/WDA signing, `idb`, `launchctl`, troubleshooting)
+- write a dedicated runbook for manual `ios-provider` startup and operations (macOS prerequisites, Xcode/WDA signing, `idb`, troubleshooting)
 
 ## Validation checkpoints
 
@@ -89,10 +87,11 @@
 - Android automation works through Appium Grid
 - `mitmproxy` works for supported traffic interception flows
 - observability stack is collecting metrics and logs
+- public HTTPS ingress works for DeviceHub, phpLDAPadmin, Appium Grid, and Argo CD
 
 ## Sequencing rules
 
 - do not deploy DeviceHub before MongoDB is ready
 - do not wire LDAP auth before OpenLDAP is ready
 - do not deploy `adbd` or `devicehub-provider` before Android node labels are applied
-- do not publish public ingress before LAN validation is complete
+- do not expose new public ingress endpoints before their service is validated internally

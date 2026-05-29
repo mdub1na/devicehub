@@ -80,6 +80,24 @@ This file keeps background reasoning, rejected alternatives, and explanatory con
 - cluster: `https://kubernetes.default.svc`
 - allowed cluster-scoped resources at start: `Namespace`
 
+### Documentation audit and cleanup on 2026-05-29
+
+- Keep `decision-log.md` as an append-only history of decisions. Do not rewrite earlier entries to match the current implementation state; add new entries when decisions evolve.
+- Current GitOps documentation should describe the live manifest layout, not the original proposed layout.
+- Public HTTPS is now part of the implemented platform through `Traefik`, `cert-manager`, and Let's Encrypt.
+- The current Argo CD applications use `https://github.com/mdub1na/devicehub.git` with `targetRevision: kuber`.
+- Android execution now has two explicit ADB/provider pairs: `adbd` + `devicehub-provider` and `adbd-2` + `devicehub-provider-2`.
+- `mitmproxy` and `observability` remain reserved GitOps slices for later work. Their namespace-only applications are intentional placeholders, not incomplete cleanup targets.
+- Remove `kuber/ios-backup`; it was an obsolete backup/working directory and included a large checked-in Selenium jar.
+- Do not move plaintext credentials to Kubernetes Secrets during this audit. Secret management remains a later hardening task.
+- Keep evaluating `kuber/scripts` separately: iOS provider scripts may still be operationally useful for the external Mac mini, while the Argo CD repo-server patch script looks like a one-off workaround that should either become a runbook note or be removed after confirmation.
+
+### iOS provider startup model on 2026-05-29
+
+- Do not run the external iOS provider through `launchctl`.
+- Start the iOS provider manually from a console command when it is needed.
+- Remove the launchctl plist from `kuber/scripts/ios` to avoid documenting or preserving an unsupported startup path.
+
 ## Explanatory notes
 
 ### What `root` means

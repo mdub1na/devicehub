@@ -42,16 +42,17 @@ Use `decision-log.md` only for background reasoning and past choices.
   - `appium`
   - `openldap`
   - `mitmproxy`
+  - `observability`
 - Selected platform stack:
   - `Traefik`
+  - `cert-manager + Let's Encrypt`
   - `Prometheus + Grafana`
   - `Loki + Promtail`
   - `Alertmanager`
-  - later `cert-manager + Let's Encrypt`
-- `Argo CD` will be used as the GitOps deployment layer for Kubernetes workloads.
+- `Argo CD` is used as the GitOps deployment layer for Kubernetes workloads.
 
 ## Next focus
 
-- finalize implementation roadmap
-- define `Argo CD` application boundaries
-- prepare implementation layout for `5.3 codex`
+- keep GitOps documentation aligned with the live manifests
+- implement the reserved `mitmproxy` and `observability` slices when we are ready for those layers
+- move plaintext credentials to a proper Kubernetes Secret / sealed secret flow later

@@ -2,34 +2,46 @@
 
 ## Rules
 
-- `root/` contains only top-level `Argo CD Application` resources
-- each child directory maps to one platform slice
-- each child directory owns its own namespace resources
-- ingress resources live next to the applications they expose
-- example secrets may exist in git, but real secret management is deferred
+- `root/` contains only top-level `Argo CD Application` resources.
+- each child directory maps to one platform slice.
+- each child directory owns its namespace resources when it needs a dedicated namespace.
+- ingress resources live next to the applications they expose.
+- `mitmproxy/` and `observability/` are reserved slices for later implementation and currently contain namespace placeholders only.
+- real secret management is deferred.
 
-## Proposed structure
-
-<details>
-<summary><code>kuber/</code></summary>
+## Current structure
 
 ```text
 kuber/
   README.md
+  appium-tests/
+  bugs/
   docs/
   gitops/
+  scripts/
 ```
 
-</details>
-
-<details>
-<summary><code>kuber/gitops/root/</code></summary>
+## Bootstrap
 
 ```text
-root/
-  kustomization.yaml
+gitops/bootstrap/
+  argocd/
+    kustomization.yaml
+    namespace.yaml
   root-app.yaml
+```
+
+`bootstrap/argocd` creates the Argo CD namespace before the upstream Argo CD install is applied.
+`bootstrap/root-app.yaml` creates the app-of-apps entrypoint.
+
+## Root Applications
+
+```text
+gitops/root/
+  kustomization.yaml
   argocd-app.yaml
+  traefik-app.yaml
+  cert-manager-app.yaml
   mongodb-app.yaml
   openldap-app.yaml
   devicehub-app.yaml
@@ -38,155 +50,123 @@ root/
   observability-app.yaml
 ```
 
-</details>
+`root/` points all child applications at `targetRevision: kuber`.
 
-<details>
-<summary><code>kuber/gitops/bootstrap/</code></summary>
-
-```text
-bootstrap/
-  argocd/
-    namespace.yaml
-    kustomization.yaml
-  root-app.yaml
-```
-
-</details>
-
-<details>
-<summary><code>kuber/gitops/argocd/</code></summary>
+## Argo CD Config
 
 ```text
-argocd/
+gitops/argocd/
   namespace.yaml
   kustomization.yaml
   project.yaml
+  argocd-cmd-params-cm.yaml
+  argocd-issuer.yaml
+  argocd-ingress.yaml
 ```
 
-</details>
+This slice owns the shared `devicehub-platform` AppProject, Argo CD server ingress, and HTTPS issuer for the Argo CD namespace.
 
-<details>
-<summary><code>kuber/gitops/mongodb/</code></summary>
+## Traefik
 
 ```text
-mongodb/
+gitops/traefik/
+  kustomization.yaml
+  traefik-helmchart.yaml
+  traefik-helmchartconfig.yaml
+```
+
+Traefik is installed through k3s `HelmChart` resources in `kube-system` and is pinned to the control node.
+
+## cert-manager
+
+```text
+gitops/cert-manager/
+  kustomization.yaml
+  cert-manager-helmchart.yaml
+```
+
+cert-manager is installed through k3s `HelmChart` resources and provides Let's Encrypt HTTP-01 issuers for the public ingress endpoints.
+
+## MongoDB
+
+```text
+gitops/mongodb/
   namespace.yaml
   kustomization.yaml
-  mongodb-statefulset.yaml
-  mongodb-service.yaml
   mongodb-pvc.yaml
+  mongodb-service.yaml
+  mongodb-service-external.yaml
+  mongodb-statefulset.yaml
   mongodb-init-job.yaml
   devicehub-migrate-job.yaml
 ```
 
-</details>
+MongoDB is a single-node replica set with persistent local-path storage and a NodePort used for external operational access.
 
-<details>
-<summary><code>kuber/gitops/openldap/</code></summary>
+## OpenLDAP
 
 ```text
-openldap/
+gitops/openldap/
   namespace.yaml
   kustomization.yaml
-  openldap-statefulset.yaml
-  openldap-service.yaml
   openldap-pvc.yaml
+  openldap-service.yaml
+  openldap-statefulset.yaml
   phpldapadmin-deployment.yaml
   phpldapadmin-service.yaml
+  phpldapadmin-issuer.yaml
   phpldapadmin-ingress.yaml
 ```
 
-</details>
+OpenLDAP and phpLDAPadmin run on the storage node. Credentials are still plain manifest values until the later secret-management pass.
 
-<details>
-<summary><code>kuber/gitops/devicehub/</code></summary>
+## DeviceHub
 
 ```text
-devicehub/
+gitops/devicehub/
   namespace.yaml
   kustomization.yaml
-  configmap.yaml
-  secrets-example.yaml
-  devicehub-app-deployment.yaml
-  devicehub-app-service.yaml
-  devicehub-auth-deployment.yaml
-  devicehub-auth-service.yaml
-  devicehub-api-deployment.yaml
-  devicehub-api-service.yaml
-  devicehub-websocket-deployment.yaml
-  devicehub-websocket-service.yaml
-  devicehub-api-groups-engine-deployment.yaml
-  devicehub-processor-deployment.yaml
-  devicehub-reaper-deployment.yaml
-  devicehub-triproxy-app-deployment.yaml
-  devicehub-triproxy-app-service.yaml
-  devicehub-triproxy-dev-deployment.yaml
-  devicehub-triproxy-dev-service.yaml
-  devicehub-storage-temp-deployment.yaml
-  devicehub-storage-temp-service.yaml
+  devicehub-configmap.yaml
+  devicehub-core-deployments.yaml
+  devicehub-core-services.yaml
   devicehub-storage-temp-pvc.yaml
-  devicehub-storage-plugin-apk-deployment.yaml
-  devicehub-storage-plugin-apk-service.yaml
-  devicehub-storage-plugin-image-deployment.yaml
-  devicehub-storage-plugin-image-service.yaml
-  adbd-deployment.yaml
-  devicehub-provider-deployment.yaml
-  ingress.yaml
+  devicehub-android-deployments.yaml
+  devicehub-android-services.yaml
+  devicehub-ios-bridge-services.yaml
+  devicehub-ios-provider-bridge.yaml
+  devicehub-dynamic-proxy.yaml
+  devicehub-issuer.yaml
+  devicehub-ingress.yaml
 ```
 
-</details>
+This slice owns DeviceHub core services, two Android ADB/provider pairs, external iOS bridge endpoints, storage, and public HTTPS ingress.
 
-<details>
-<summary><code>kuber/gitops/appium/</code></summary>
+## Appium
 
 ```text
-appium/
+gitops/appium/
   namespace.yaml
   kustomization.yaml
-  appium-grid-router-deployment.yaml
-  appium-grid-router-service.yaml
-  appium-grid-distributor-deployment.yaml
-  appium-grid-session-queue-deployment.yaml
-  appium-grid-sessions-deployment.yaml
+  appium-grid-services.yaml
+  appium-grid-deployments.yaml
+  android-appium-node-config.yaml
   android-appium-nodes-deployment.yaml
-  ingress.yaml
+  appium-grid-issuer.yaml
+  appium-grid-ingress.yaml
 ```
 
-</details>
+Appium Grid control-plane components run on the storage node. Android Appium node replicas run on the Android node and connect to the DeviceHub ADB service.
 
-<details>
-<summary><code>kuber/gitops/mitmproxy/</code></summary>
+## Reserved Slices
 
 ```text
-mitmproxy/
+gitops/mitmproxy/
   namespace.yaml
   kustomization.yaml
-  mitmproxy-deployment.yaml
-  mitmproxy-service.yaml
-  mitmweb-deployment.yaml
-  mitmweb-service.yaml
-  ingress.yaml
-```
 
-</details>
-
-<details>
-<summary><code>kuber/gitops/observability/</code></summary>
-
-```text
-observability/
+gitops/observability/
   namespace.yaml
   kustomization.yaml
-  prometheus-statefulset.yaml
-  prometheus-service.yaml
-  grafana-deployment.yaml
-  grafana-service.yaml
-  loki-statefulset.yaml
-  loki-service.yaml
-  promtail-daemonset.yaml
-  alertmanager-deployment.yaml
-  alertmanager-service.yaml
-  ingress.yaml
 ```
 
-</details>
+These directories intentionally reserve namespace and Argo CD application boundaries. Their workloads will be added later.
