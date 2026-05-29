@@ -17,6 +17,18 @@ spec:
       port: 8200
       targetPort: 8200
       protocol: TCP
+    - name: uiautomator2-8201
+      port: 8201
+      targetPort: 8201
+      protocol: TCP
+    - name: uiautomator2-8202
+      port: 8202
+      targetPort: 8202
+      protocol: TCP
+    - name: uiautomator2-8203
+      port: 8203
+      targetPort: 8203
+      protocol: TCP
 ---
 apiVersion: v1
 kind: Service
@@ -172,6 +184,18 @@ spec:
     - name: uiautomator2-8200
       port: 8200
       targetPort: 8200
+      protocol: TCP
+    - name: uiautomator2-8201
+      port: 8201
+      targetPort: 8201
+      protocol: TCP
+    - name: uiautomator2-8202
+      port: 8202
+      targetPort: 8202
+      protocol: TCP
+    - name: uiautomator2-8203
+      port: 8203
+      targetPort: 8203
       protocol: TCP
 ---
 apiVersion: v1

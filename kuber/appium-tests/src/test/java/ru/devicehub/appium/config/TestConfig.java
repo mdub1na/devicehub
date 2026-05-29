@@ -11,6 +11,7 @@ public final class TestConfig {
     private static final String DEFAULT_BROWSER_NAME = "Chrome";
     private static final String DEFAULT_TARGET_URL = "https://example.com";
     private static final int DEFAULT_APPIUM_ADB_PORT = 5037;
+    private static final int DEFAULT_APPIUM_SYSTEM_PORT = 0;
     private static final String DEFAULT_DEVICEHUB_DEVICE_TYPE = "";
     private static final int DEFAULT_DEVICEHUB_AMOUNT = 1;
     private static final int DEFAULT_DEVICEHUB_TIMEOUT_SECONDS = 600;
@@ -51,6 +52,10 @@ public final class TestConfig {
 
     public static int appiumAdbPort() {
         return intEnv("APPIUM_ADB_PORT", DEFAULT_APPIUM_ADB_PORT);
+    }
+
+    public static int appiumSystemPort() {
+        return intEnv("APPIUM_SYSTEM_PORT", DEFAULT_APPIUM_SYSTEM_PORT);
     }
 
     public static Duration explicitWait() {

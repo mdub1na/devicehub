@@ -46,6 +46,11 @@ public final class DriverFactory {
             options.setUdid(udid);
         }
 
+        int systemPort = TestConfig.appiumSystemPort();
+        if (systemPort > 0) {
+            options.setSystemPort(systemPort);
+        }
+
         return options;
     }
 }
