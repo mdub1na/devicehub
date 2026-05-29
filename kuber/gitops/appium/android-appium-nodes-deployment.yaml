@@ -43,6 +43,8 @@ spec:
               value: adbd.devicehub.svc.cluster.local
             - name: ANDROID_ADB_SERVER_PORT
               value: "5037"
+            - name: ADB_SERVER_SOCKET
+              value: tcp:adbd.devicehub.svc.cluster.local:5037
           ports:
             - name: appium
               containerPort: 4733
