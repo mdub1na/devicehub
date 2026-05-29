@@ -48,6 +48,15 @@ spec:
           ports:
             - name: appium
               containerPort: 4733
+        - name: adb-proxy
+          image: alpine/socat:1.8.0.3
+          imagePullPolicy: IfNotPresent
+          args:
+            - tcp-listen:5037,fork,reuseaddr
+            - tcp:adbd.devicehub.svc.cluster.local:5037
+          ports:
+            - name: adb
+              containerPort: 5037
         - name: selenium-node-relay
           image: selenium/node-base:4.39.0
           imagePullPolicy: IfNotPresent
