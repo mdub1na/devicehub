@@ -14,14 +14,27 @@ public final class DriverFactory {
     }
 
     public static AndroidDriver createAndroidBrowserDriver(String udid) {
+        UiAutomator2Options options = baseAndroidOptions(udid);
+        options.setCapability(CapabilityType.BROWSER_NAME, TestConfig.browserName());
+
+        return new AndroidDriver(TestConfig.appiumServerUrl(), options);
+    }
+
+    public static AndroidDriver createAndroidSettingsDriver(String udid) {
+        UiAutomator2Options options = baseAndroidOptions(udid)
+            .setAppPackage("com.android.settings")
+            .setAppActivity(".Settings");
+
+        return new AndroidDriver(TestConfig.appiumServerUrl(), options);
+    }
+
+    private static UiAutomator2Options baseAndroidOptions(String udid) {
         UiAutomator2Options options = new UiAutomator2Options()
             .setAutomationName("UiAutomator2")
             .setPlatformName("Android")
             .setDeviceName(TestConfig.deviceName())
             .setNewCommandTimeout(TestConfig.newCommandTimeout())
             .setNoReset(true);
-
-        options.setCapability(CapabilityType.BROWSER_NAME, TestConfig.browserName());
 
         String remoteAdbHost = TestConfig.appiumRemoteAdbHost();
         if (!remoteAdbHost.isBlank()) {
@@ -33,6 +46,6 @@ public final class DriverFactory {
             options.setUdid(udid);
         }
 
-        return new AndroidDriver(TestConfig.appiumServerUrl(), options);
+        return options;
     }
 }

@@ -94,3 +94,24 @@ When Appium runs outside the ADB server host, pass remote ADB capabilities:
 APPIUM_REMOTE_ADB_HOST=adbd.devicehub.svc.cluster.local
 APPIUM_ADB_PORT=5037
 ```
+
+## DeviceHub Settings Smoke
+
+This smoke test captures one DeviceHub device, opens Android Settings through Appium, checks that page source is available, and frees the DeviceHub group in `finally`.
+
+```bash
+cd kuber/appium-tests
+DEVICEHUB_BASE_URL=https://<devicehub-host> \
+DEVICEHUB_TOKEN=<access-token> \
+DEVICEHUB_MODEL=SM-A556E \
+APPIUM_SERVER_URL=http://127.0.0.1:4734 \
+APPIUM_REMOTE_ADB_HOST=adbd.devicehub.svc.cluster.local \
+APPIUM_ADB_PORT=5037 \
+./gradlew devicehubAppiumSettingsTest
+```
+
+Use a `DEVICEHUB_MODEL` value that is visible from the Appium node's remote ADB host. For example:
+
+```bash
+adb -H adbd.devicehub.svc.cluster.local -P 5037 devices -l
+```

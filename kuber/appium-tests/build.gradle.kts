@@ -63,3 +63,12 @@ tasks.register<Test>("devicehubAppiumAndroidTest") {
         includeTags("devicehub-appium")
     }
 }
+
+tasks.register<Test>("devicehubAppiumSettingsTest") {
+    description = "Runs Android Settings Appium smoke tests against a DeviceHub-managed device."
+    group = "verification"
+
+    useJUnitPlatform {
+        includeTags("devicehub-appium-settings")
+    }
+}
