@@ -104,7 +104,7 @@ cd kuber/appium-tests
 DEVICEHUB_BASE_URL=https://<devicehub-host> \
 DEVICEHUB_TOKEN=<access-token> \
 DEVICEHUB_MODEL=SM-A556E \
-APPIUM_SERVER_URL=http://127.0.0.1:4734 \
+APPIUM_SERVER_URL=https://<appium-grid-host> \
 APPIUM_REMOTE_ADB_HOST=adbd.devicehub.svc.cluster.local \
 APPIUM_ADB_PORT=5037 \
 ./gradlew devicehubAppiumSettingsTest
@@ -114,4 +114,11 @@ Use a `DEVICEHUB_MODEL` value that is visible from the Appium node's remote ADB 
 
 ```bash
 adb -H adbd.devicehub.svc.cluster.local -P 5037 devices -l
+```
+
+For diagnostics against a single Appium node, forward the node locally and switch `APPIUM_SERVER_URL` to the forwarded port:
+
+```bash
+kubectl -n appium port-forward pod/<android-appium-node-pod> 4734:4733
+APPIUM_SERVER_URL=http://127.0.0.1:4734
 ```
