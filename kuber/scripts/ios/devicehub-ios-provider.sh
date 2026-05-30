@@ -31,7 +31,7 @@ exec "${NODE_BIN}" ./.build/bin/stf.mjs ios-provider \
   --screen-ws-url-pattern 'wss://devicehub.putmyhexon.ru/d/ios-provider/<%= publicPort %>/' \
   --public-ip devicehub.putmyhexon.ru \
   --provider ios-provider \
-  --storage-url http://192.168.0.121:31300/ \
+  --storage-url https://devicehub.putmyhexon.ru/ \
   --screen-ws-range-min 18000 \
   --screen-ws-range-max 18010 \
   --wda-range-min 18200 \
