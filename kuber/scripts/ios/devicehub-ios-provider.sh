@@ -32,6 +32,10 @@ exec "${NODE_BIN}" ./.build/bin/stf.mjs ios-provider \
   --public-ip devicehub.putmyhexon.ru \
   --provider ios-provider \
   --storage-url http://192.168.0.121:31300/ \
+  --screen-ws-range-min 18000 \
+  --screen-ws-range-max 18010 \
+  --wda-range-min 18200 \
+  --wda-range-max 18210 \
   --secret nosecret \
   --host 192.168.0.104 \
   --no-cleanup

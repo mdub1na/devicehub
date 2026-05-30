@@ -16,6 +16,38 @@ spec:
       port: 18001
       targetPort: 18001
       protocol: TCP
+    - name: screen-18002
+      port: 18002
+      targetPort: 18002
+      protocol: TCP
+    - name: screen-18003
+      port: 18003
+      targetPort: 18003
+      protocol: TCP
+    - name: screen-18004
+      port: 18004
+      targetPort: 18004
+      protocol: TCP
+    - name: screen-18005
+      port: 18005
+      targetPort: 18005
+      protocol: TCP
+    - name: screen-18006
+      port: 18006
+      targetPort: 18006
+      protocol: TCP
+    - name: screen-18007
+      port: 18007
+      targetPort: 18007
+      protocol: TCP
+    - name: screen-18008
+      port: 18008
+      targetPort: 18008
+      protocol: TCP
+    - name: screen-18009
+      port: 18009
+      targetPort: 18009
+      protocol: TCP
     - name: connect-18200
       port: 18200
       targetPort: 18200
@@ -23,6 +55,38 @@ spec:
     - name: connect-18201
       port: 18201
       targetPort: 18201
+      protocol: TCP
+    - name: connect-18202
+      port: 18202
+      targetPort: 18202
+      protocol: TCP
+    - name: connect-18203
+      port: 18203
+      targetPort: 18203
+      protocol: TCP
+    - name: connect-18204
+      port: 18204
+      targetPort: 18204
+      protocol: TCP
+    - name: connect-18205
+      port: 18205
+      targetPort: 18205
+      protocol: TCP
+    - name: connect-18206
+      port: 18206
+      targetPort: 18206
+      protocol: TCP
+    - name: connect-18207
+      port: 18207
+      targetPort: 18207
+      protocol: TCP
+    - name: connect-18208
+      port: 18208
+      targetPort: 18208
+      protocol: TCP
+    - name: connect-18209
+      port: 18209
+      targetPort: 18209
       protocol: TCP
 ---
 apiVersion: v1
@@ -42,9 +106,57 @@ subsets:
       - name: screen-18001
         port: 18001
         protocol: TCP
+      - name: screen-18002
+        port: 18002
+        protocol: TCP
+      - name: screen-18003
+        port: 18003
+        protocol: TCP
+      - name: screen-18004
+        port: 18004
+        protocol: TCP
+      - name: screen-18005
+        port: 18005
+        protocol: TCP
+      - name: screen-18006
+        port: 18006
+        protocol: TCP
+      - name: screen-18007
+        port: 18007
+        protocol: TCP
+      - name: screen-18008
+        port: 18008
+        protocol: TCP
+      - name: screen-18009
+        port: 18009
+        protocol: TCP
       - name: connect-18200
         port: 18200
         protocol: TCP
       - name: connect-18201
         port: 18201
+        protocol: TCP
+      - name: connect-18202
+        port: 18202
+        protocol: TCP
+      - name: connect-18203
+        port: 18203
+        protocol: TCP
+      - name: connect-18204
+        port: 18204
+        protocol: TCP
+      - name: connect-18205
+        port: 18205
+        protocol: TCP
+      - name: connect-18206
+        port: 18206
+        protocol: TCP
+      - name: connect-18207
+        port: 18207
+        protocol: TCP
+      - name: connect-18208
+        port: 18208
+        protocol: TCP
+      - name: connect-18209
+        port: 18209
         protocol: TCP
