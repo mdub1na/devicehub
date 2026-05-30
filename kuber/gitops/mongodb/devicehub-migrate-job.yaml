@@ -43,7 +43,7 @@ spec:
               exit 1
       containers:
         - name: migrate
-          image: vkcom/devicehub:v1.5.2
+          image: mdub1na/devicehub:develop-amd64-cce5fa51
           imagePullPolicy: IfNotPresent
           env:
             - name: MONGODB_PORT_27017_TCP

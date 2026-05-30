@@ -97,7 +97,7 @@ spec:
               exit 1
       containers:
         - name: devicehub-provider
-          image: vkcom/devicehub:v1.5.2
+          image: mdub1na/devicehub:develop-amd64-cce5fa51
           imagePullPolicy: IfNotPresent
           command:
             - stf
@@ -228,7 +228,7 @@ spec:
               exit 1
       containers:
         - name: devicehub-provider-2
-          image: vkcom/devicehub:v1.5.2
+          image: mdub1na/devicehub:develop-amd64-cce5fa51
           imagePullPolicy: IfNotPresent
           command:
             - stf

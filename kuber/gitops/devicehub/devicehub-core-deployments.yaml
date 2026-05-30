@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: devicehub-triproxy-app
-          image: vkcom/devicehub:v1.5.2
+          image: mdub1na/devicehub:develop-amd64-cce5fa51
           imagePullPolicy: IfNotPresent
           command:
             - stf
@@ -57,7 +57,7 @@ spec:
     spec:
       containers:
         - name: devicehub-triproxy-dev
-          image: vkcom/devicehub:v1.5.2
+          image: mdub1na/devicehub:develop-amd64-cce5fa51
           imagePullPolicy: IfNotPresent
           command:
             - stf
@@ -108,7 +108,7 @@ spec:
                       - storage
       containers:
         - name: devicehub-storage-temp
-          image: vkcom/devicehub:v1.5.2
+          image: mdub1na/devicehub:develop-amd64-cce5fa51
           imagePullPolicy: IfNotPresent
           command:
             - stf
@@ -155,7 +155,7 @@ spec:
     spec:
       containers:
         - name: devicehub-storage-plugin-apk
-          image: vkcom/devicehub:v1.5.2
+          image: mdub1na/devicehub:develop-amd64-cce5fa51
           imagePullPolicy: IfNotPresent
           command:
             - stf
@@ -191,7 +191,7 @@ spec:
     spec:
       containers:
         - name: devicehub-storage-plugin-image
-          image: vkcom/devicehub:v1.5.2
+          image: mdub1na/devicehub:develop-amd64-cce5fa51
           imagePullPolicy: IfNotPresent
           command:
             - stf
@@ -227,7 +227,7 @@ spec:
     spec:
       containers:
         - name: devicehub-processor
-          image: vkcom/devicehub:v1.5.2
+          image: mdub1na/devicehub:develop-amd64-cce5fa51
           imagePullPolicy: IfNotPresent
           command:
             - stf
@@ -260,7 +260,7 @@ spec:
     spec:
       containers:
         - name: devicehub-reaper
-          image: vkcom/devicehub:v1.5.2
+          image: mdub1na/devicehub:develop-amd64-cce5fa51
           imagePullPolicy: IfNotPresent
           command:
             - stf
@@ -295,7 +295,7 @@ spec:
     spec:
       containers:
         - name: devicehub-api
-          image: vkcom/devicehub:v1.5.2
+          image: mdub1na/devicehub:develop-amd64-cce5fa51
           imagePullPolicy: IfNotPresent
           command:
             - stf
@@ -337,7 +337,7 @@ spec:
     spec:
       containers:
         - name: devicehub-websocket
-          image: vkcom/devicehub:v1.5.2
+          image: mdub1na/devicehub:develop-amd64-cce5fa51
           imagePullPolicy: IfNotPresent
           command:
             - stf
@@ -381,7 +381,7 @@ spec:
     spec:
       containers:
         - name: devicehub-api-groups-engine
-          image: vkcom/devicehub:v1.5.2
+          image: mdub1na/devicehub:develop-amd64-cce5fa51
           imagePullPolicy: IfNotPresent
           command:
             - stf
@@ -414,7 +414,7 @@ spec:
     spec:
       containers:
         - name: devicehub-auth
-          image: vkcom/devicehub:v1.5.2
+          image: mdub1na/devicehub:develop-amd64-cce5fa51
           imagePullPolicy: IfNotPresent
           command:
             - stf
@@ -448,7 +448,7 @@ spec:
     spec:
       containers:
         - name: devicehub-app
-          image: vkcom/devicehub:v1.5.2
+          image: mdub1na/devicehub:develop-amd64-cce5fa51
           imagePullPolicy: IfNotPresent
           command:
             - stf
