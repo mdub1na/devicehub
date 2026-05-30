@@ -37,5 +37,5 @@ exec "${NODE_BIN}" ./.build/bin/stf.mjs ios-provider \
   --wda-range-min 18200 \
   --wda-range-max 18210 \
   --secret nosecret \
-  --host 192.168.0.104 \
+  --host 192.168.0.124 \
   --no-cleanup

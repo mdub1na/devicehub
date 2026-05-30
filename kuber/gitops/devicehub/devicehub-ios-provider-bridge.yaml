@@ -98,7 +98,7 @@ metadata:
     app.kubernetes.io/component: ios-bridge
 subsets:
   - addresses:
-      - ip: 192.168.0.104
+      - ip: 192.168.0.124
     ports:
       - name: screen-18000
         port: 18000
