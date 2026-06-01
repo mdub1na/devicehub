@@ -84,6 +84,7 @@ public final class DeviceHubClient {
                     text(device, "serial"),
                     text(device, "model"),
                     text(device, "platform"),
+                    providerName(device),
                     text(device, "remoteConnectUrl")
                 ));
             }
@@ -133,5 +134,16 @@ public final class DeviceHubClient {
             return "";
         }
         return value.asText();
+    }
+
+    private String providerName(JsonNode device) {
+        JsonNode provider = device.path("provider");
+        if (provider.isTextual()) {
+            return provider.asText();
+        }
+        if (provider.isObject()) {
+            return text(provider, "name");
+        }
+        return "";
     }
 }

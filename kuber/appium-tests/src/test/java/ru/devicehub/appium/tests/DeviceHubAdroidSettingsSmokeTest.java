@@ -32,13 +32,14 @@ class DeviceHubAdroidSettingsSmokeTest {
             CapturedDevice device = group.devices().get(0);
             assertFalse(device.serial().isBlank(), "Captured device serial should not be blank");
             System.out.printf(
-                "Running Settings smoke on DeviceHub device: serial=%s model=%s remoteConnectUrl=%s%n",
+                "Running Settings smoke on DeviceHub device: serial=%s model=%s provider=%s remoteConnectUrl=%s%n",
                 device.serial(),
                 device.model(),
+                device.provider(),
                 device.remoteConnectUrl()
             );
 
-            driver = DriverFactory.createAndroidSettingsDriver(device.serial());
+            driver = DriverFactory.createAndroidSettingsDriver(device);
             assertFalse(driver.getPageSource().isBlank(), "Settings page source should not be blank");
         }
         finally {

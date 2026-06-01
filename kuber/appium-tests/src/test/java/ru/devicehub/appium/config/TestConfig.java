@@ -13,6 +13,8 @@ public final class TestConfig {
     private static final int DEFAULT_APPIUM_ADB_PORT = 5037;
     private static final int DEFAULT_APPIUM_SYSTEM_PORT = 0;
     private static final String DEFAULT_DEVICEHUB_DEVICE_TYPE = "";
+    private static final String DEFAULT_DEVICEHUB_ADB_HOST = "adbd.devicehub.svc.cluster.local";
+    private static final String DEFAULT_DEVICEHUB_ADB_HOST_2 = "adbd-2.devicehub.svc.cluster.local";
     private static final int DEFAULT_DEVICEHUB_AMOUNT = 1;
     private static final int DEFAULT_DEVICEHUB_TIMEOUT_SECONDS = 600;
     private static final Duration DEFAULT_EXPLICIT_WAIT = Duration.ofSeconds(20);
@@ -48,6 +50,19 @@ public final class TestConfig {
 
     public static String appiumRemoteAdbHost() {
         return env("APPIUM_REMOTE_ADB_HOST", "");
+    }
+
+    public static String appiumRemoteAdbHost(String providerName) {
+        String explicitRemoteAdbHost = appiumRemoteAdbHost();
+        if (!explicitRemoteAdbHost.isBlank()) {
+            return explicitRemoteAdbHost;
+        }
+
+        return switch (providerName) {
+            case "devicehub-provider" -> DEFAULT_DEVICEHUB_ADB_HOST;
+            case "devicehub-provider-2" -> DEFAULT_DEVICEHUB_ADB_HOST_2;
+            default -> "";
+        };
     }
 
     public static int appiumAdbPort() {

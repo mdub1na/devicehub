@@ -35,13 +35,14 @@ class DeviceHubAndroidChromeSmokeTest {
             CapturedDevice device = group.devices().get(0);
             assertFalse(device.serial().isBlank(), "Captured device serial should not be blank");
             System.out.printf(
-                "Running Appium smoke on DeviceHub device: serial=%s model=%s remoteConnectUrl=%s%n",
+                "Running Appium smoke on DeviceHub device: serial=%s model=%s provider=%s remoteConnectUrl=%s%n",
                 device.serial(),
                 device.model(),
+                device.provider(),
                 device.remoteConnectUrl()
             );
 
-            driver = DriverFactory.createAndroidBrowserDriver(device.serial());
+            driver = DriverFactory.createAndroidBrowserDriver(device);
             driver.get(TestConfig.targetUrl());
 
             WebDriverWait wait = new WebDriverWait(driver, TestConfig.explicitWait());
