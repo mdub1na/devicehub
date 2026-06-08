@@ -5,7 +5,7 @@ metadata:
   labels:
     app.kubernetes.io/name: android-appium-node-1
 spec:
-  replicas: 4
+  replicas: 10
   selector:
     matchLabels:
       app.kubernetes.io/name: android-appium-node-1
@@ -90,7 +90,7 @@ metadata:
   labels:
     app.kubernetes.io/name: android-appium-node-2
 spec:
-  replicas: 4
+  replicas: 10
   selector:
     matchLabels:
       app.kubernetes.io/name: android-appium-node-2
