@@ -8,6 +8,9 @@ import java.time.Duration;
 public final class TestConfig {
     private static final String DEFAULT_APPIUM_SERVER_URL = "http://127.0.0.1:4723";
     private static final String DEFAULT_DEVICE_NAME = "Android";
+    private static final String DEFAULT_IOS_DEVICE_NAME = "iPhone";
+    private static final String DEFAULT_IOS_BUNDLE_ID = "com.apple.Preferences";
+    private static final String DEFAULT_DEVICEHUB_IOS_MODEL = "iPhone (Альфа)";
     private static final String DEFAULT_BROWSER_NAME = "Chrome";
     private static final String DEFAULT_TARGET_URL = "https://example.com";
     private static final int DEFAULT_APPIUM_ADB_PORT = 5037;
@@ -36,6 +39,18 @@ public final class TestConfig {
         return env("ANDROID_DEVICE_NAME", DEFAULT_DEVICE_NAME);
     }
 
+    public static String iosDeviceName() {
+        return env("IOS_DEVICE_NAME", DEFAULT_IOS_DEVICE_NAME);
+    }
+
+    public static String iosBundleId() {
+        return env("IOS_BUNDLE_ID", DEFAULT_IOS_BUNDLE_ID);
+    }
+
+    public static String iosPlatformVersion() {
+        return env("IOS_PLATFORM_VERSION", "");
+    }
+
     public static String browserName() {
         return env("ANDROID_BROWSER_NAME", DEFAULT_BROWSER_NAME);
     }
@@ -46,6 +61,10 @@ public final class TestConfig {
 
     public static String udid() {
         return env("ANDROID_UDID", "");
+    }
+
+    public static String iosUdid() {
+        return env("IOS_UDID", "");
     }
 
     public static String appiumRemoteAdbHost() {
@@ -123,6 +142,10 @@ public final class TestConfig {
 
     public static String deviceHubModel() {
         return env("DEVICEHUB_MODEL", "");
+    }
+
+    public static String deviceHubIosModel() {
+        return env("DEVICEHUB_MODEL", env("DEVICEHUB_IOS_MODEL", DEFAULT_DEVICEHUB_IOS_MODEL));
     }
 
     public static String deviceHubSdk() {

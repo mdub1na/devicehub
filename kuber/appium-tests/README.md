@@ -1,6 +1,6 @@
 # DeviceHub Appium Tests
 
-Java smoke tests for Android devices. The first target is a local Android device; DeviceHub integration will be added after the local browser test is stable.
+Java smoke tests for Android and iOS devices through local Appium or DeviceHub Appium Grid.
 
 ## Requirements
 
@@ -9,6 +9,7 @@ Java smoke tests for Android devices. The first target is a local Android device
 - Android platform tools (`adb`)
 - Appium 3 with the UiAutomator2 driver
 - Chrome installed on the Android device
+- For iOS: macOS Appium node with Xcode, WebDriverAgent signing, and the XCUITest driver
 
 ## Local Run
 
@@ -123,6 +124,29 @@ For diagnostics against a single Appium node, forward the node locally and switc
 kubectl -n appium port-forward pod/<android-appium-node-pod> 4734:4733
 APPIUM_SERVER_URL=http://127.0.0.1:4734
 ```
+
+## DeviceHub iOS Settings Smoke
+
+This smoke test captures one iOS DeviceHub device, opens iOS Settings through Appium/XCUITest, checks that page source is available, and frees the DeviceHub group in `finally`.
+
+The current DeviceHub iOS devices use `platform=iOS`, while the autotests API can capture them reliably by model. The default iOS model filter is `iPhone (Альфа)` and can be overridden with `DEVICEHUB_IOS_MODEL` or `DEVICEHUB_MODEL`.
+
+```bash
+cd kuber/appium-tests
+DEVICEHUB_BASE_URL=https://<devicehub-host> \
+DEVICEHUB_TOKEN=<access-token> \
+APPIUM_SERVER_URL=https://<appium-grid-host> \
+./gradlew devicehubAppiumIosSettingsTest
+```
+
+Optional iOS variables:
+
+- `DEVICEHUB_IOS_MODEL` defaults to `iPhone (Альфа)`
+- `IOS_DEVICE_NAME` defaults to `iPhone`
+- `IOS_BUNDLE_ID` defaults to `com.apple.Preferences`
+- `IOS_PLATFORM_VERSION` defaults to empty
+
+The public Appium Grid must have at least one iOS/XCUITest node registered. A Linux Kubernetes Appium pod is not enough for iOS because XCUITest requires macOS, Xcode, and WebDriverAgent signing.
 
 ## External Repository Handoff
 
@@ -254,6 +278,7 @@ UiAutomator2 uses `systemPort` for communication with the device. If two session
   - `android-appium-node-1` -> `adbd.devicehub.svc.cluster.local`
   - `android-appium-node-2` -> `adbd-2.devicehub.svc.cluster.local`
 - For four parallel Android sessions, there must be four free devices and enough Appium node capacity.
+- For iOS sessions, Appium Grid must also have a macOS XCUITest node with access to the iOS devices and a working WebDriverAgent signing setup.
 
 ### What Not To Use As The First Test
 

@@ -1,6 +1,6 @@
 package ru.devicehub.appium.support;
 
-import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 
@@ -19,7 +19,7 @@ public final class TestArtifacts {
     private TestArtifacts() {
     }
 
-    public static void saveFailureArtifacts(AndroidDriver driver, String testName) {
+    public static void saveFailureArtifacts(AppiumDriver driver, String testName) {
         if (driver == null) {
             return;
         }
